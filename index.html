@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Singapore Attractions Filter</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Singapore Attractions</h1>
+        <p>Discover the best indoor and outdoor attractions in Singapore</p>
+
+        <div class="filter-buttons">
+            <button class="filter-button active" data-filter="all">All Attractions</button>
+            <button class="filter-button" data-filter="indoor">Indoor Only</button>
+            <button class="filter-button" data-filter="outdoor">Outdoor Only</button>
+        </div>
+
+        <div class="attractions-grid">
+            <!-- S.E.A Aquarium -->
+            <div class="attraction-card" data-type="indoor">
+                <div class="attraction-image">S.E.A Aquarium Image</div>
+                <div class="attraction-info">
+                    <div class="attraction-name">S.E.A Aquarium</div>
+                    <span class="attraction-type indoor">Indoor</span>
+                </div>
+            </div>
+
+            <!-- Universal Studios Singapore -->
+            <div class="attraction-card" data-type="outdoor">
+                <div class="attraction-image">Universal Studios Image</div>
+                <div class="attraction-info">
+                    <div class="attraction-name">Universal Studios Singapore</div>
+                    <span class="attraction-type outdoor">Outdoor</span>
+                </div>
+            </div>
+
+            <!-- National Gallery Singapore -->
+            <div class="attraction-card" data-type="indoor">
+                <div class="attraction-image">National Gallery Image</div>
+                <div class="attraction-info">
+                    <div class="attraction-name">National Gallery Singapore</div>
+                    <span class="attraction-type indoor">Indoor</span>
+                </div>
+            </div>
+
+            <!-- Bird Paradise -->
+            <div class="attraction-card" data-type="outdoor">
+                <div class="attraction-image">Bird Paradise Image</div>
+                <div class="attraction-info">
+                    <div class="attraction-name">Bird Paradise</div>
+                    <span class="attraction-type outdoor">Outdoor</span>
+                </div>
+            </div>
+
+            <!-- Singapore Botanical Gardens -->
+            <div class="attraction-card" data-type="outdoor">
+                <div class="attraction-image">Botanical Gardens Image</div>
+                <div class="attraction-info">
+                    <div class="attraction-name">Singapore Botanical Gardens</div>
+                    <span class="attraction-type outdoor">Outdoor</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
