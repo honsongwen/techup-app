@@ -70,6 +70,27 @@
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
         }
         
+        /* Weather Widget Section */
+        .weather-section {
+            padding: 40px 0;
+            background-color: #0288d1;
+            color: white;
+            text-align: center;
+        }
+        
+        .weather-section h2 {
+            margin-bottom: 25px;
+            font-size: 2rem;
+        }
+        
+        .weather-container {
+            max-width: 600px;
+            margin: 0 auto;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+        }
+        
         /* Features Section */
         .features {
             padding: 80px 0;
@@ -268,6 +289,19 @@
             <h1>Discover Singapore</h1>
             <p>The ultimate tool for Singapore residents to plan perfect itineraries for their foreign guests quickly and easily</p>
             <a href="attractions.html" class="cta-button">Explore Attractions</a>
+        </div>
+    </section>
+    
+    <!-- Weather Widget Section -->
+    <section class="weather-section">
+        <div class="container">
+            <h2>Plan Around the Weather</h2>
+            <div class="weather-container">
+                <a class="weatherwidget-io" href="https://forecast7.com/en/1d35103d82/singapore/" data-label_1="SINGAPORE" data-label_2="WEATHER" data-theme="original" >SINGAPORE WEATHER</a>
+                <script>
+                !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src='https://weatherwidget.io/js/widget.min.js';fjs.parentNode.insertBefore(js,fjs);}}(document,'script','weatherwidget-io-js');
+                </script>
+            </div>
         </div>
     </section>
     
