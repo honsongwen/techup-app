@@ -3,951 +3,902 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Singapore Attractions Filter</title>
+    <title>Singapore Attractions</title>
     <style>
-        body {
+        * {
+            box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            color: #333;
+        }
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f7fa;
+        }
+        .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
-            background-color: #f9f9f9;
         }
-        
         h1 {
-            color: #d32f2f;
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .back-link {
+            display: block;
             text-align: center;
             margin-bottom: 30px;
+            font-size: 16px;
+            color: #3498db;
+            text-decoration: none;
         }
-        
+        .back-link:hover {
+            text-decoration: underline;
+        }
         .filters {
             background-color: #fff;
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
         }
-        
-        .filter-group {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        .filter-row {
+            display: flex;
+            flex-wrap: wrap;
             gap: 15px;
             margin-bottom: 15px;
         }
-        
-        .filter-item {
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        .filter-group h3 {
+            margin-top: 0;
             margin-bottom: 10px;
+            font-size: 16px;
+            color: #2c3e50;
         }
-        
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
+        .filter-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
         }
-        
-        select, input[type="text"] {
+        .filter-options label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        .filter-options input {
+            margin-right: 5px;
+        }
+        .search-box {
             width: 100%;
-            padding: 8px;
-            border-radius: 4px;
+            padding: 10px;
             border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-size: 16px;
         }
-        
-        .button-group {
+        .action-buttons {
             display: flex;
             justify-content: center;
-            gap: 10px;
+            gap: 15px;
             margin-top: 15px;
         }
-        
         button {
-            background-color: #d32f2f;
+            background-color: #3498db;
             color: white;
             border: none;
             padding: 10px 20px;
             border-radius: 4px;
             cursor: pointer;
-            font-weight: 600;
+            font-size: 16px;
             transition: background-color 0.3s;
         }
-        
         button:hover {
-            background-color: #b71c1c;
+            background-color: #2980b9;
         }
-        
         button.reset {
-            background-color: #757575;
+            background-color: #e74c3c;
         }
-        
         button.reset:hover {
-            background-color: #616161;
+            background-color: #c0392b;
         }
-        
-        .attractions {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-        }
-        
-        .attraction-card {
+        table {
+            width: 100%;
+            border-collapse: collapse;
             background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
         }
-        
-        .attraction-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
         }
-        
-        .card-header {
-            background-color: #d32f2f;
+        th {
+            background-color: #3498db;
             color: white;
-            padding: 15px;
+            position: sticky;
+            top: 0;
         }
-        
-        .card-header h3 {
-            margin: 0;
-            font-size: 1.2rem;
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
         }
-        
-        .card-body {
-            padding: 15px;
+        tr:hover {
+            background-color: #ebf5fb;
         }
-        
-        .feature {
-            display: flex;
-            margin-bottom: 8px;
+        .attraction-name {
+            font-weight: bold;
+            color: #2c3e50;
         }
-        
-        .feature-label {
-            min-width: 140px;
-            font-weight: 600;
+        .attraction-name a {
+            color: #2c3e50;
+            text-decoration: none;
         }
-        
-        .tag {
-            display: inline-block;
-            background-color: #f1f1f1;
-            padding: 4px 8px;
-            border-radius: 4px;
-            margin-right: 5px;
-            margin-bottom: 5px;
-            font-size: 0.9rem;
+        .attraction-name a:hover {
+            text-decoration: underline;
+            color: #3498db;
         }
-        
-        .region-tag {
-            background-color: #bbdefb;
+        .yes {
+            color: #27ae60;
         }
-        
-        .experience-tag {
-            background-color: #c8e6c9;
+        .no {
+            color: #e74c3c;
         }
-        
-        .result-count {
-            text-align: center;
-            margin-bottom: 20px;
-            font-weight: 600;
+        .partially, .limited {
+            color: #f39c12;
         }
-        
-        @media (max-width: 768px) {
-            .attractions {
-                grid-template-columns: 1fr;
-            }
-            
-            .filter-group {
-                grid-template-columns: 1fr;
-            }
-        }
-        
         .no-results {
             text-align: center;
             padding: 40px;
-            background-color: #fff;
-            border-radius: 8px;
-            grid-column: 1 / -1;
+            font-size: 18px;
+            color: #7f8c8d;
         }
-        
-        /* Custom checkbox styling */
-        .checkbox-container {
-            display: block;
-            position: relative;
-            padding-left: 30px;
-            margin-bottom: 12px;
-            cursor: pointer;
-            user-select: none;
-        }
-        
-        .checkbox-container input {
-            position: absolute;
-            opacity: 0;
-            cursor: pointer;
-            height: 0;
-            width: 0;
-        }
-        
-        .checkmark {
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 20px;
-            width: 20px;
-            background-color: #eee;
-            border-radius: 3px;
-        }
-        
-        .checkbox-container:hover input ~ .checkmark {
-            background-color: #ccc;
-        }
-        
-        .checkbox-container input:checked ~ .checkmark {
-            background-color: #d32f2f;
-        }
-        
-        .checkmark:after {
-            content: "";
-            position: absolute;
-            display: none;
-        }
-        
-        .checkbox-container input:checked ~ .checkmark:after {
-            display: block;
-        }
-        
-        .checkbox-container .checkmark:after {
-            left: 7px;
-            top: 3px;
-            width: 5px;
-            height: 10px;
-            border: solid white;
-            border-width: 0 2px 2px 0;
-            transform: rotate(45deg);
+        @media (max-width: 768px) {
+            .filter-group {
+                min-width: 100%;
+            }
+            th, td {
+                padding: 8px 10px;
+                font-size: 14px;
+            }
+            .table-container {
+                overflow-x: auto;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>Singapore Attractions Filter</h1>
-    
-    <div class="filters">
-        <div class="filter-group">
-            <div class="filter-item">
-                <label for="search">Search by Name:</label>
-                <input type="text" id="search" placeholder="Enter attraction name...">
+    <div class="container">
+        <h1>Singapore Attractions</h1>
+        <a href="index.html" class="back-link">← Back to Home</a>
+        
+        <div class="filters">
+            <input type="text" class="search-box" id="searchBox" placeholder="Search attractions...">
+            
+            <div class="filter-row">
+                <div class="filter-group">
+                    <h3>Amenities</h3>
+                    <div class="filter-options">
+                        <label><input type="checkbox" class="filter-checkbox" data-column="diaper" data-value="Yes"> Diaper Changing Rooms</label>
+                        <label><input type="checkbox" class="filter-checkbox" data-column="stroller" data-value="Yes"> Wheelchair/Stroller Accessible</label>
+                    </div>
+                </div>
+                
+                <div class="filter-group">
+                    <h3>Location</h3>
+                    <div class="filter-options">
+                        <label><input type="checkbox" class="filter-checkbox" data-column="indoor" data-value="Yes"> Indoor</label>
+                        <label><input type="checkbox" class="filter-checkbox" data-column="indoor" data-value="Partially"> Partially Indoor</label>
+                    </div>
+                </div>
+                
+                <div class="filter-group">
+                    <h3>Cost</h3>
+                    <div class="filter-options">
+                        <label><input type="checkbox" class="filter-checkbox" data-column="cost" data-value="Free"> Free</label>
+                        <label><input type="checkbox" class="filter-checkbox" data-column="cost" data-value="Paid"> Paid</label>
+                    </div>
+                </div>
             </div>
             
-            <div class="filter-item">
-                <label for="region">Region:</label>
-                <select id="region">
-                    <option value="">All Regions</option>
-                    <option value="Central">Central</option>
-                    <option value="North">North</option>
-                    <option value="South">South</option>
-                    <option value="East">East</option>
-                    <option value="West">West</option>
-                </select>
+            <div class="filter-row">
+                <div class="filter-group">
+                    <h3>Walking Required</h3>
+                    <div class="filter-options">
+                        <label><input type="checkbox" class="filter-checkbox" data-column="walking" data-value="Minimal"> Minimal</label>
+                        <label><input type="checkbox" class="filter-checkbox" data-column="walking" data-value="Moderate"> Moderate</label>
+                        <label><input type="checkbox" class="filter-checkbox" data-column="walking" data-value="Extensive"> Extensive</label>
+                    </div>
+                </div>
+                
+                <div class="filter-group">
+                    <h3>Time</h3>
+                    <div class="filter-options">
+                        <label><input type="checkbox" class="filter-checkbox" data-column="time" data-value="Day"> Day</label>
+                        <label><input type="checkbox" class="filter-checkbox" data-column="time" data-value="Night"> Night</label>
+                        <label><input type="checkbox" class="filter-checkbox" data-column="time" data-value="Both"> Both</label>
+                    </div>
+                </div>
+                
+                <div class="filter-group">
+                    <h3>Region</h3>
+                    <div class="filter-options">
+                        <label><input type="checkbox" class="filter-checkbox" data-column="region" data-value="Central"> Central</label>
+                        <label><input type="checkbox" class="filter-checkbox" data-column="region" data-value="North"> North</label>
+                        <label><input type="checkbox" class="filter-checkbox" data-column="region" data-value="South"> South</label>
+                        <label><input type="checkbox" class="filter-checkbox" data-column="region" data-value="East"> East</label>
+                        <label><input type="checkbox" class="filter-checkbox" data-column="region" data-value="West"> West</label>
+                    </div>
+                </div>
             </div>
             
-            <div class="filter-item">
-                <label for="cost">Cost:</label>
-                <select id="cost">
-                    <option value="">All</option>
-                    <option value="Free">Free</option>
-                    <option value="Paid">Paid</option>
-                    <option value="Mixed">Mixed or Free/Paid</option>
-                </select>
+            <div class="filter-row">
+                <div class="filter-group">
+                    <h3>Experience Type</h3>
+                    <div class="filter-options">
+                        <label><input type="checkbox" class="filter-checkbox" data-column="experience" data-value="Nature"> Nature</label>
+                        <label><input type="checkbox" class="filter-checkbox" data-column="experience" data-value="Art"> Art</label>
+                        <label><input type="checkbox" class="filter-checkbox" data-column="experience" data-value="History"> History</label>
+                        <label><input type="checkbox" class="filter-checkbox" data-column="experience" data-value="Cultural"> Cultural</label>
+                        <label><input type="checkbox" class="filter-checkbox" data-column="experience" data-value="Science"> Science</label>
+                        <label><input type="checkbox" class="filter-checkbox" data-column="experience" data-value="Adventure"> Adventure</label>
+                        <label><input type="checkbox" class="filter-checkbox" data-column="experience" data-value="Wildlife/Marine Life"> Wildlife</label>
+                        <label><input type="checkbox" class="filter-checkbox" data-column="experience" data-value="Photo Spot"> Photo Spot</label>
+                        <label><input type="checkbox" class="filter-checkbox" data-column="experience" data-value="Shopping"> Shopping</label>
+                        <label><input type="checkbox" class="filter-checkbox" data-column="experience" data-value="Beach"> Beach</label>
+                        <label><input type="checkbox" class="filter-checkbox" data-column="experience" data-value="Family Fun"> Family Fun</label>
+                    </div>
+                </div>
             </div>
             
-            <div class="filter-item">
-                <label for="suitable-time">Suitable Time:</label>
-                <select id="suitable-time">
-                    <option value="">All</option>
-                    <option value="Day">Day</option>
-                    <option value="Night">Night</option>
-                    <option value="Both">Both Day & Night</option>
-                </select>
+            <div class="action-buttons">
+                <button id="applyFilters">Apply Filters</button>
+                <button id="resetFilters" class="reset">Reset Filters</button>
             </div>
         </div>
         
-        <div class="filter-group">
-            <div class="filter-item">
-                <label for="experience-type">Experience Type:</label>
-                <select id="experience-type">
-                    <option value="">All Experiences</option>
-                    <option value="Nature">Nature</option>
-                    <option value="Wildlife/Marine Life">Wildlife/Marine Life</option>
-                    <option value="Family Fun">Family Fun</option>
-                    <option value="Adventure">Adventure</option>
-                    <option value="Photo Spot">Photo Spot</option>
-                    <option value="Art">Art</option>
-                    <option value="History">History</option>
-                    <option value="Cultural">Cultural</option>
-                    <option value="Science">Science</option>
-                    <option value="Shopping">Shopping</option>
-                    <option value="Beach">Beach</option>
-                </select>
+        <div class="table-container">
+            <table id="attractionsTable">
+                <thead>
+                    <tr>
+                        <th>Attraction</th>
+                        <th>Diaper Changing</th>
+                        <th>Wheelchair/Stroller</th>
+                        <th>Indoor</th>
+                        <th>Cost</th>
+                        <th>Walking</th>
+                        <th>Time</th>
+                        <th>Experience</th>
+                        <th>Region</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Table content will be generated by JavaScript -->
+                </tbody>
+            </table>
+            <div id="noResults" class="no-results" style="display: none;">
+                No attractions match your filters. Please try different criteria.
             </div>
-            
-            <div class="filter-item">
-                <label for="walking-required">Walking Required:</label>
-                <select id="walking-required">
-                    <option value="">All</option>
-                    <option value="Minimal">Minimal</option>
-                    <option value="Moderate">Moderate</option>
-                    <option value="Extensive">Extensive</option>
-                </select>
-            </div>
-            
-            <div class="filter-item">
-                <label>Facilities:</label>
-                <label class="checkbox-container">Diaper Changing Rooms
-                    <input type="checkbox" id="diaper-changing">
-                    <span class="checkmark"></span>
-                </label>
-                <label class="checkbox-container">Stroller/Wheelchair Accessible
-                    <input type="checkbox" id="wheelchair-accessible">
-                    <span class="checkmark"></span>
-                </label>
-                <label class="checkbox-container">Indoor Attraction
-                    <input type="checkbox" id="indoor">
-                    <span class="checkmark"></span>
-                </label>
-            </div>
-        </div>
-        
-        <div class="button-group">
-            <button id="apply-filters">Apply Filters</button>
-            <button id="reset-filters" class="reset">Reset Filters</button>
         </div>
     </div>
-    
-    <div class="result-count" id="result-count"></div>
-    
-    <div class="attractions" id="attractions-container"></div>
-    
+
     <script>
-        // Define the data
+        // Attraction data
         const attractions = [
             {
                 name: "Gardens by the Bay",
-                diaperChanging: "Yes",
-                wheelchairAccessible: "Yes",
+                website: "https://www.gardensbythebay.com.sg/",
+                diaper: "Yes",
+                stroller: "Yes",
                 indoor: "Partially",
-                cost: "Mixed",
-                walkingRequired: "Moderate",
-                suitableTime: "Both",
-                experienceTypes: ["Nature", "Photo Spot", "Family Fun"],
+                cost: "Paid",
+                walking: "Moderate",
+                time: "Both",
+                experience: "Nature, Photo Spot, Family Fun",
                 region: "Central"
             },
             {
                 name: "Singapore Zoo",
-                diaperChanging: "Yes",
-                wheelchairAccessible: "Yes",
+                website: "https://www.mandai.com/en/singapore-zoo.html",
+                diaper: "Yes",
+                stroller: "Yes",
                 indoor: "No",
                 cost: "Paid",
-                walkingRequired: "Extensive",
-                suitableTime: "Day",
-                experienceTypes: ["Wildlife/Marine Life", "Family Fun"],
+                walking: "Extensive",
+                time: "Day",
+                experience: "Wildlife/Marine Life, Family Fun",
                 region: "North"
             },
             {
                 name: "Night Safari",
-                diaperChanging: "Yes",
-                wheelchairAccessible: "Yes",
+                website: "https://www.mandai.com/en/night-safari.html",
+                diaper: "Yes",
+                stroller: "Yes",
                 indoor: "No",
                 cost: "Paid",
-                walkingRequired: "Moderate",
-                suitableTime: "Night",
-                experienceTypes: ["Wildlife/Marine Life", "Adventure", "Family Fun"],
+                walking: "Moderate",
+                time: "Night",
+                experience: "Wildlife/Marine Life, Adventure, Family Fun",
                 region: "North"
             },
             {
                 name: "River Wonders",
-                diaperChanging: "Yes",
-                wheelchairAccessible: "Yes",
+                website: "https://www.mandai.com/en/river-wonders.html",
+                diaper: "Yes",
+                stroller: "Yes",
                 indoor: "Partially",
                 cost: "Paid",
-                walkingRequired: "Moderate",
-                suitableTime: "Day",
-                experienceTypes: ["Wildlife/Marine Life", "Family Fun"],
+                walking: "Moderate",
+                time: "Day",
+                experience: "Wildlife/Marine Life, Family Fun",
                 region: "North"
             },
             {
                 name: "Bird Paradise",
-                diaperChanging: "Yes",
-                wheelchairAccessible: "Yes",
+                website: "https://www.mandai.com/en/bird-paradise.html",
+                diaper: "Yes",
+                stroller: "Yes",
                 indoor: "Partially",
                 cost: "Paid",
-                walkingRequired: "Moderate",
-                suitableTime: "Day",
-                experienceTypes: ["Wildlife/Marine Life", "Family Fun"],
+                walking: "Moderate",
+                time: "Day",
+                experience: "Wildlife/Marine Life, Family Fun",
                 region: "North"
             },
             {
                 name: "S.E.A. Aquarium",
-                diaperChanging: "Yes",
-                wheelchairAccessible: "Yes",
+                website: "https://www.rwsentosa.com/en/attractions/sea-aquarium",
+                diaper: "Yes",
+                stroller: "Yes",
                 indoor: "Yes",
                 cost: "Paid",
-                walkingRequired: "Minimal",
-                suitableTime: "Both",
-                experienceTypes: ["Wildlife/Marine Life", "Family Fun"],
+                walking: "Minimal",
+                time: "Both",
+                experience: "Wildlife/Marine Life, Family Fun",
                 region: "South"
             },
             {
                 name: "Universal Studios Singapore",
-                diaperChanging: "Yes",
-                wheelchairAccessible: "Yes",
+                website: "https://www.rwsentosa.com/en/attractions/universal-studios-singapore",
+                diaper: "Yes",
+                stroller: "Yes",
                 indoor: "Partially",
                 cost: "Paid",
-                walkingRequired: "Extensive",
-                suitableTime: "Day",
-                experienceTypes: ["Adventure", "Family Fun"],
+                walking: "Extensive",
+                time: "Day",
+                experience: "Adventure, Family Fun",
                 region: "South"
             },
             {
                 name: "Sentosa Beaches",
-                diaperChanging: "Limited",
-                wheelchairAccessible: "Yes",
+                website: "https://www.sentosa.com.sg/en/things-to-do/attractions/beaches",
+                diaper: "Limited",
+                stroller: "Yes",
                 indoor: "No",
                 cost: "Free",
-                walkingRequired: "Moderate",
-                suitableTime: "Day",
-                experienceTypes: ["Beach", "Family Fun"],
+                walking: "Moderate",
+                time: "Day",
+                experience: "Beach, Family Fun",
                 region: "South"
             },
             {
                 name: "Adventure Cove Waterpark",
-                diaperChanging: "Yes",
-                wheelchairAccessible: "Yes",
+                website: "https://www.rwsentosa.com/en/attractions/adventure-cove-waterpark",
+                diaper: "Yes",
+                stroller: "Yes",
                 indoor: "No",
                 cost: "Paid",
-                walkingRequired: "Moderate",
-                suitableTime: "Day",
-                experienceTypes: ["Adventure", "Wildlife/Marine Life", "Family Fun"],
+                walking: "Moderate",
+                time: "Day",
+                experience: "Adventure, Wildlife/Marine Life, Family Fun",
                 region: "South"
             },
             {
                 name: "Trick Eye Museum",
-                diaperChanging: "Yes",
-                wheelchairAccessible: "Yes",
+                website: "https://www.trickeye.com/singapore",
+                diaper: "Yes",
+                stroller: "Yes",
                 indoor: "Yes",
                 cost: "Paid",
-                walkingRequired: "Minimal",
-                suitableTime: "Both",
-                experienceTypes: ["Art", "Family Fun"],
+                walking: "Minimal",
+                time: "Both",
+                experience: "Art, Family Fun",
                 region: "South"
             },
             {
                 name: "ArtScience Museum",
-                diaperChanging: "Yes",
-                wheelchairAccessible: "Yes",
+                website: "https://www.marinabaysands.com/museum.html",
+                diaper: "Yes",
+                stroller: "Yes",
                 indoor: "Yes",
                 cost: "Paid",
-                walkingRequired: "Minimal",
-                suitableTime: "Both",
-                experienceTypes: ["Art", "Science"],
+                walking: "Minimal",
+                time: "Both",
+                experience: "Art, Science",
                 region: "Central"
             },
             {
                 name: "National Museum of Singapore",
-                diaperChanging: "Yes",
-                wheelchairAccessible: "Yes",
+                website: "https://www.nhb.gov.sg/nationalmuseum",
+                diaper: "Yes",
+                stroller: "Yes",
                 indoor: "Yes",
                 cost: "Paid",
-                walkingRequired: "Minimal",
-                suitableTime: "Both",
-                experienceTypes: ["History", "Cultural"],
+                walking: "Minimal",
+                time: "Both",
+                experience: "History, Cultural",
                 region: "Central"
             },
             {
                 name: "National Gallery Singapore",
-                diaperChanging: "Yes",
-                wheelchairAccessible: "Yes",
+                website: "https://www.nationalgallery.sg",
+                diaper: "Yes",
+                stroller: "Yes",
                 indoor: "Yes",
                 cost: "Paid",
-                walkingRequired: "Moderate",
-                suitableTime: "Both",
-                experienceTypes: ["Art", "Cultural"],
+                walking: "Moderate",
+                time: "Both",
+                experience: "Art, Cultural",
                 region: "Central"
             },
             {
                 name: "Asian Civilisations Museum",
-                diaperChanging: "Yes",
-                wheelchairAccessible: "Yes",
+                website: "https://www.nhb.gov.sg/acm",
+                diaper: "Yes",
+                stroller: "Yes",
                 indoor: "Yes",
                 cost: "Paid",
-                walkingRequired: "Minimal",
-                suitableTime: "Both",
-                experienceTypes: ["History", "Cultural"],
+                walking: "Minimal",
+                time: "Both",
+                experience: "History, Cultural",
                 region: "Central"
             },
             {
                 name: "Singapore Flyer",
-                diaperChanging: "Yes",
-                wheelchairAccessible: "Yes",
+                website: "https://www.singaporeflyer.com",
+                diaper: "Yes",
+                stroller: "Yes",
                 indoor: "Yes",
                 cost: "Paid",
-                walkingRequired: "Minimal",
-                suitableTime: "Both",
-                experienceTypes: ["Photo Spot", "Family Fun"],
+                walking: "Minimal",
+                time: "Both",
+                experience: "Photo Spot, Family Fun",
                 region: "Central"
             },
             {
                 name: "Marina Bay Sands SkyPark",
-                diaperChanging: "Yes",
-                wheelchairAccessible: "Yes",
+                website: "https://www.marinabaysands.com/sands-skypark.html",
+                diaper: "Yes",
+                stroller: "Yes",
                 indoor: "Yes",
                 cost: "Paid",
-                walkingRequired: "Minimal",
-                suitableTime: "Both",
-                experienceTypes: ["Photo Spot"],
+                walking: "Minimal",
+                time: "Both",
+                experience: "Photo Spot",
                 region: "Central"
             },
             {
                 name: "Esplanade – Theatres on the Bay",
-                diaperChanging: "Yes",
-                wheelchairAccessible: "Yes",
+                website: "https://www.esplanade.com",
+                diaper: "Yes",
+                stroller: "Yes",
                 indoor: "Yes",
                 cost: "Free",
-                walkingRequired: "Minimal",
-                suitableTime: "Both",
-                experienceTypes: ["Art", "Cultural"],
+                walking: "Minimal",
+                time: "Both",
+                experience: "Art, Cultural",
                 region: "Central"
             },
             {
                 name: "Merlion Park",
-                diaperChanging: "No",
-                wheelchairAccessible: "Yes",
+                website: "https://www.visitsingapore.com/see-do-singapore/recreation-leisure/viewpoints/merlion-park/",
+                diaper: "No",
+                stroller: "Yes",
                 indoor: "No",
                 cost: "Free",
-                walkingRequired: "Minimal",
-                suitableTime: "Both",
-                experienceTypes: ["Photo Spot"],
+                walking: "Minimal",
+                time: "Both",
+                experience: "Photo Spot",
                 region: "Central"
             },
             {
                 name: "Singapore Botanic Gardens",
-                diaperChanging: "Yes",
-                wheelchairAccessible: "Yes",
+                website: "https://www.nparks.gov.sg/sbg",
+                diaper: "Yes",
+                stroller: "Yes",
                 indoor: "No",
                 cost: "Free",
-                walkingRequired: "Extensive",
-                suitableTime: "Day",
-                experienceTypes: ["Nature", "Photo Spot"],
+                walking: "Extensive",
+                time: "Day",
+                experience: "Nature, Photo Spot",
                 region: "Central"
             },
             {
                 name: "Fort Canning Park",
-                diaperChanging: "No",
-                wheelchairAccessible: "Yes",
+                website: "https://www.nparks.gov.sg/gardens-parks-and-nature/parks-and-nature-reserves/fort-canning-park",
+                diaper: "No",
+                stroller: "Yes",
                 indoor: "No",
                 cost: "Free",
-                walkingRequired: "Extensive",
-                suitableTime: "Day",
-                experienceTypes: ["Nature", "History"],
+                walking: "Extensive",
+                time: "Day",
+                experience: "Nature, History",
                 region: "Central"
             },
             {
                 name: "Jewel Changi Airport",
-                diaperChanging: "Yes",
-                wheelchairAccessible: "Yes",
+                website: "https://www.jewelchangiairport.com",
+                diaper: "Yes",
+                stroller: "Yes",
                 indoor: "Yes",
                 cost: "Free",
-                walkingRequired: "Moderate",
-                suitableTime: "Both",
-                experienceTypes: ["Shopping", "Nature", "Photo Spot", "Family Fun"],
+                walking: "Moderate",
+                time: "Both",
+                experience: "Shopping, Nature, Photo Spot, Family Fun",
                 region: "East"
             },
             {
                 name: "Changi Experience Studio",
-                diaperChanging: "Yes",
-                wheelchairAccessible: "Yes",
+                website: "https://www.jewelchangiairport.com/en/attractions/changi-experience-studio.html",
+                diaper: "Yes",
+                stroller: "Yes",
                 indoor: "Yes",
                 cost: "Paid",
-                walkingRequired: "Minimal",
-                suitableTime: "Both",
-                experienceTypes: ["Science", "Family Fun"],
+                walking: "Minimal",
+                time: "Both",
+                experience: "Science, Family Fun",
                 region: "East"
             },
             {
                 name: "Singapore Science Centre",
-                diaperChanging: "Yes",
-                wheelchairAccessible: "Yes",
+                website: "https://www.science.edu.sg",
+                diaper: "Yes",
+                stroller: "Yes",
                 indoor: "Yes",
                 cost: "Paid",
-                walkingRequired: "Moderate",
-                suitableTime: "Day",
-                experienceTypes: ["Science", "Family Fun"],
+                walking: "Moderate",
+                time: "Day",
+                experience: "Science, Family Fun",
                 region: "West"
             },
             {
                 name: "Snow City",
-                diaperChanging: "Yes",
-                wheelchairAccessible: "Yes",
+                website: "https://www.snowcity.com.sg",
+                diaper: "Yes",
+                stroller: "Yes",
                 indoor: "Yes",
                 cost: "Paid",
-                walkingRequired: "Minimal",
-                suitableTime: "Day",
-                experienceTypes: ["Adventure", "Family Fun"],
+                walking: "Minimal",
+                time: "Day",
+                experience: "Adventure, Family Fun",
                 region: "West"
             },
             {
                 name: "Haw Par Villa",
-                diaperChanging: "No",
-                wheelchairAccessible: "Yes",
+                website: "https://www.hawparvilla.sg",
+                diaper: "No",
+                stroller: "Yes",
                 indoor: "No",
                 cost: "Free",
-                walkingRequired: "Moderate",
-                suitableTime: "Day",
-                experienceTypes: ["Cultural", "History"],
+                walking: "Moderate",
+                time: "Day",
+                experience: "Cultural, History",
                 region: "West"
             },
             {
                 name: "Chinatown Heritage Centre",
-                diaperChanging: "Yes",
-                wheelchairAccessible: "Yes",
+                website: "https://www.chinatownheritagecentre.com.sg",
+                diaper: "Yes",
+                stroller: "Yes",
                 indoor: "Yes",
                 cost: "Paid",
-                walkingRequired: "Minimal",
-                suitableTime: "Day",
-                experienceTypes: ["History", "Cultural"],
+                walking: "Minimal",
+                time: "Day",
+                experience: "History, Cultural",
                 region: "Central"
             },
             {
                 name: "Little India",
-                diaperChanging: "Limited",
-                wheelchairAccessible: "Yes",
+                website: "https://www.visitsingapore.com/see-do-singapore/places-to-see/little-india/",
+                diaper: "Limited",
+                stroller: "Yes",
                 indoor: "No",
                 cost: "Free",
-                walkingRequired: "Moderate",
-                suitableTime: "Both",
-                experienceTypes: ["Cultural", "Shopping"],
+                walking: "Moderate",
+                time: "Both",
+                experience: "Cultural, Shopping",
                 region: "Central"
             },
             {
                 name: "Kampong Glam",
-                diaperChanging: "Limited",
-                wheelchairAccessible: "Yes",
+                website: "https://www.visitsingapore.com/see-do-singapore/places-to-see/kampong-glam/",
+                diaper: "Limited",
+                stroller: "Yes",
                 indoor: "No",
                 cost: "Free",
-                walkingRequired: "Moderate",
-                suitableTime: "Both",
-                experienceTypes: ["Cultural", "Photo Spot"],
+                walking: "Moderate",
+                time: "Both",
+                experience: "Cultural, Photo Spot",
                 region: "Central"
             },
             {
                 name: "Singapore River Cruise",
-                diaperChanging: "No",
-                wheelchairAccessible: "Yes",
+                website: "https://www.rivercruise.com.sg",
+                diaper: "No",
+                stroller: "Yes",
                 indoor: "Yes",
                 cost: "Paid",
-                walkingRequired: "Minimal",
-                suitableTime: "Both",
-                experienceTypes: ["Photo Spot"],
+                walking: "Minimal",
+                time: "Both",
+                experience: "Photo Spot",
                 region: "Central"
             },
             {
                 name: "Clarke Quay",
-                diaperChanging: "Limited",
-                wheelchairAccessible: "Yes",
+                website: "https://www.capitaland.com/sg/malls/clarkequay/",
+                diaper: "Limited",
+                stroller: "Yes",
                 indoor: "No",
                 cost: "Free",
-                walkingRequired: "Moderate",
-                suitableTime: "Night",
-                experienceTypes: ["Shopping", "Family Fun"],
+                walking: "Moderate",
+                time: "Night",
+                experience: "Shopping, Family Fun",
                 region: "Central"
             },
             {
                 name: "Orchard Road",
-                diaperChanging: "Yes",
-                wheelchairAccessible: "Yes",
+                website: "https://www.visitsingapore.com/see-do-singapore/places-to-see/orchard/",
+                diaper: "Yes",
+                stroller: "Yes",
                 indoor: "Yes",
                 cost: "Free",
-                walkingRequired: "Extensive",
-                suitableTime: "Both",
-                experienceTypes: ["Shopping"],
+                walking: "Extensive",
+                time: "Both",
+                experience: "Shopping",
                 region: "Central"
             },
             {
                 name: "Southern Ridges Walk",
-                diaperChanging: "No",
-                wheelchairAccessible: "Yes (partially)",
+                website: "https://www.nparks.gov.sg/gardens-parks-and-nature/parks-and-nature-reserves/the-southern-ridges",
+                diaper: "No",
+                stroller: "Yes (partially)",
                 indoor: "No",
                 cost: "Free",
-                walkingRequired: "Extensive",
-                suitableTime: "Day",
-                experienceTypes: ["Nature"],
+                walking: "Extensive",
+                time: "Day",
+                experience: "Nature",
                 region: "South"
             },
             {
                 name: "Labrador Nature Reserve",
-                diaperChanging: "No",
-                wheelchairAccessible: "Yes",
+                website: "https://www.nparks.gov.sg/gardens-parks-and-nature/parks-and-nature-reserves/labrador-nature-reserve",
+                diaper: "No",
+                stroller: "Yes",
                 indoor: "No",
                 cost: "Free",
-                walkingRequired: "Moderate",
-                suitableTime: "Day",
-                experienceTypes: ["Nature", "History"],
+                walking: "Moderate",
+                time: "Day",
+                experience: "Nature, History",
                 region: "South"
             },
             {
                 name: "Bukit Timah Nature Reserve",
-                diaperChanging: "No",
-                wheelchairAccessible: "No",
+                website: "https://www.nparks.gov.sg/gardens-parks-and-nature/parks-and-nature-reserves/bukit-timah-nature-reserve",
+                diaper: "No",
+                stroller: "No",
                 indoor: "No",
                 cost: "Free",
-                walkingRequired: "Extensive",
-                suitableTime: "Day",
-                experienceTypes: ["Nature"],
+                walking: "Extensive",
+                time: "Day",
+                experience: "Nature",
                 region: "Central"
             },
             {
                 name: "Lee Kong Chian Natural History Museum",
-                diaperChanging: "Yes",
-                wheelchairAccessible: "Yes",
+                website: "https://lkcnhm.nus.edu.sg",
+                diaper: "Yes",
+                stroller: "Yes",
                 indoor: "Yes",
                 cost: "Paid",
-                walkingRequired: "Moderate",
-                suitableTime: "Day",
-                experienceTypes: ["Science", "Family Fun"],
+                walking: "Moderate",
+                time: "Day",
+                experience: "Science, Family Fun",
                 region: "West"
             },
             {
                 name: "MacRitchie Reservoir",
-                diaperChanging: "No",
-                wheelchairAccessible: "Yes",
+                website: "https://www.nparks.gov.sg/gardens-parks-and-nature/parks-and-nature-reserves/macritchie-reservoir-park",
+                diaper: "No",
+                stroller: "Yes",
                 indoor: "No",
                 cost: "Free",
-                walkingRequired: "Extensive",
-                suitableTime: "Day",
-                experienceTypes: ["Nature"],
+                walking: "Extensive",
+                time: "Day",
+                experience: "Nature",
                 region: "Central"
             },
             {
                 name: "Mount Faber Cable Car",
-                diaperChanging: "No",
-                wheelchairAccessible: "Yes",
+                website: "https://www.onefabergroup.com/mountfaber",
+                diaper: "No",
+                stroller: "Yes",
                 indoor: "Yes",
                 cost: "Paid",
-                walkingRequired: "Minimal",
-                suitableTime: "Both",
-                experienceTypes: ["Adventure", "Photo Spot", "Family Fun"],
+                walking: "Minimal",
+                time: "Both",
+                experience: "Adventure, Photo Spot, Family Fun",
                 region: "South"
             },
             {
                 name: "Sun Yat Sen Nanyang Memorial Hall",
-                diaperChanging: "Yes",
-                wheelchairAccessible: "Yes",
+                website: "https://www.sysnmh.org.sg",
+                diaper: "Yes",
+                stroller: "Yes",
                 indoor: "Yes",
                 cost: "Paid",
-                walkingRequired: "Minimal",
-                suitableTime: "Day",
-                experienceTypes: ["History", "Cultural"],
+                walking: "Minimal",
+                time: "Day",
+                experience: "History, Cultural",
                 region: "Central"
             },
             {
                 name: "Singapore Discovery Centre",
-                diaperChanging: "Yes",
-                wheelchairAccessible: "Yes",
+                website: "https://www.sdc.com.sg",
+                diaper: "Yes",
+                stroller: "Yes",
                 indoor: "Yes",
-                cost: "Free/Paid",
-                walkingRequired: "Moderate",
-                suitableTime: "Day",
-                experienceTypes: ["History", "Science", "Family Fun"],
+                cost: "Paid",
+                walking: "Moderate",
+                time: "Day",
+                experience: "History, Science, Family Fun",
                 region: "West"
             },
             {
                 name: "Marina Barrage",
-                diaperChanging: "Limited",
-                wheelchairAccessible: "Yes",
+                website: "https://www.pub.gov.sg/marinabarrage",
+                diaper: "Limited",
+                stroller: "Yes",
                 indoor: "No",
                 cost: "Free",
-                walkingRequired: "Moderate",
-                suitableTime: "Both",
-                experienceTypes: ["Nature", "Photo Spot", "Family Fun"],
+                walking: "Moderate",
+                time: "Both",
+                experience: "Nature, Photo Spot, Family Fun",
                 region: "South"
             }
         ];
 
-        // DOM Elements
-        const searchInput = document.getElementById('search');
-        const regionSelect = document.getElementById('region');
-        const costSelect = document.getElementById('cost');
-        const suitableTimeSelect = document.getElementById('suitable-time');
-        const experienceTypeSelect = document.getElementById('experience-type');
-        const walkingRequiredSelect = document.getElementById('walking-required');
-        const diaperChangingCheckbox = document.getElementById('diaper-changing');
-        const wheelchairAccessibleCheckbox = document.getElementById('wheelchair-accessible');
-        const indoorCheckbox = document.getElementById('indoor');
-        const applyFiltersButton = document.getElementById('apply-filters');
-        const resetFiltersButton = document.getElementById('reset-filters');
-        const attractionsContainer = document.getElementById('attractions-container');
-        const resultCountElement = document.getElementById('result-count');
-
-        // Display all attractions initially
-        displayAttractions(attractions);
-
-        // Event listeners
-        applyFiltersButton.addEventListener('click', applyFilters);
-        resetFiltersButton.addEventListener('click', resetFilters);
-
-        // Function to filter attractions
-        function applyFilters() {
-            const searchTerm = searchInput.value.toLowerCase();
-            const regionFilter = regionSelect.value;
-            const costFilter = costSelect.value;
-            const suitableTimeFilter = suitableTimeSelect.value;
-            const experienceTypeFilter = experienceTypeSelect.value;
-            const walkingRequiredFilter = walkingRequiredSelect.value;
-            const diaperChangingFilter = diaperChangingCheckbox.checked;
-            const wheelchairAccessibleFilter = wheelchairAccessibleCheckbox.checked;
-            const indoorFilter = indoorCheckbox.checked;
-
-            const filteredAttractions = attractions.filter(attraction => {
-                // Search by name
-                if (searchTerm && !attraction.name.toLowerCase().includes(searchTerm)) {
-                    return false;
-                }
-
-                // Filter by region
-                if (regionFilter && attraction.region !== regionFilter) {
-                    return false;
-                }
-
-                // Filter by cost
-                if (costFilter) {
-                    if (costFilter === "Mixed" && attraction.cost !== "Mixed" && attraction.cost !== "Free/Paid") {
-                        return false;
-                    } else if (costFilter !== "Mixed" && attraction.cost !== costFilter && attraction.cost !== "Free/Paid" && attraction.cost !== "Mixed") {
-                        return false;
-                    }
-                }
-
-                // Filter by suitable time
-                if (suitableTimeFilter && attraction.suitableTime !== suitableTimeFilter && attraction.suitableTime !== "Both") {
-                    return false;
-                }
-
-                // Filter by experience type
-                if (experienceTypeFilter && !attraction.experienceTypes.includes(experienceTypeFilter)) {
-                    return false;
-                }
-
-                // Filter by walking required
-                if (walkingRequiredFilter && attraction.walkingRequired !== walkingRequiredFilter) {
-                    return false;
-                }
-
-                // Filter by diaper changing
-                if (diaperChangingFilter && attraction.diaperChanging === "No") {
-                    return false;
-                }
-
-                // Filter by wheelchair accessible
-                if (wheelchairAccessibleFilter && attraction.wheelchairAccessible === "No") {
-                    return false;
-                }
-
-                // Filter by indoor
-                if (indoorFilter && attraction.indoor === "No") {
-                    return false;
-                }
-
-                return true;
-            });
-
-            displayAttractions(filteredAttractions);
-        }
-
-        // Function to reset filters
-        function resetFilters() {
-            searchInput.value = '';
-            regionSelect.value = '';
-            costSelect.value = '';
-            suitableTimeSelect.value = '';
-            experienceTypeSelect.value = '';
-            walkingRequiredSelect.value = '';
-            diaperChangingCheckbox.checked = false;
-            wheelchairAccessibleCheckbox.checked = false;
-            indoorCheckbox.checked = false;
-
-            displayAttractions(attractions);
-        }
-
-        // Function to display attractions
-        function displayAttractions(attractionsToDisplay) {
-            // Update result count
-            resultCountElement.textContent = `Found ${attractionsToDisplay.length} attractions`;
+        // Function to populate the table with data
+        function populateTable(filteredData) {
+            const tableBody = document.querySelector('#attractionsTable tbody');
+            tableBody.innerHTML = '';
             
-            // Clear current display
-            attractionsContainer.innerHTML = '';
-
-            if (attractionsToDisplay.length === 0) {
-                attractionsContainer.innerHTML = `
-                    <div class="no-results">
-                        <h3>No attractions match your filters</h3>
-                        <p>Try adjusting your filter criteria</p>
-                    </div>
-                `;
+            if (filteredData.length === 0) {
+                document.getElementById('noResults').style.display = 'block';
+                document.getElementById('attractionsTable').style.display = 'none';
                 return;
             }
-
-            // Display filtered attractions
-            attractionsToDisplay.forEach(attraction => {
-                const card = document.createElement('div');
-                card.className = 'attraction-card';
-
-                const experienceTags = attraction.experienceTypes.map(type => 
-                    `<span class="tag experience-tag">${type}</span>`
-                ).join('');
-
-                card.innerHTML = `
-                    <div class="card-header">
-                        <h3>${attraction.name}</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="feature">
-                            <span class="feature-label">Region:</span>
-                            <span class="tag region-tag">${attraction.region}</span>
-                        </div>
-                        <div class="feature">
-                            <span class="feature-label">Cost:</span>
-                            <span>${attraction.cost}</span>
-                        </div>
-                        <div class="feature">
-                            <span class="feature-label">Walking Required:</span>
-                            <span>${attraction.walkingRequired}</span>
-                        </div>
-                        <div class="feature">
-                            <span class="feature-label">Suitable Time:</span>
-                            <span>${attraction.suitableTime}</span>
-                        </div>
-                        <div class="feature">
-                            <span class="feature-label">Diaper Changing:</span>
-                            <span>${attraction.diaperChanging}</span>
-                        </div>
-                        <div class="feature">
-                            <span class="feature-label">Wheelchair Access:</span>
-                            <span>${attraction.wheelchairAccessible}</span>
-                        </div>
-                        <div class="feature">
-                            <span class="feature-label">Indoor:</span>
-                            <span>${attraction.indoor}</span>
-                        </div>
-                        <div class="feature">
-                            <span class="feature-label">Experience Types:</span>
-                            <div>${experienceTags}</div>
-                        </div>
-                    </div>
+            
+            document.getElementById('noResults').style.display = 'none';
+            document.getElementById('attractionsTable').style.display = 'table';
+            
+            filteredData.forEach(attraction => {
+                const row = document.createElement('tr');
+                
+                // Add CSS classes for styling
+                const diaperClass = attraction.diaper === 'Yes' ? 'yes' : (attraction.diaper === 'No' ? 'no' : 'limited');
+                const strollerClass = attraction.stroller === 'Yes' ? 'yes' : 'no';
+                const indoorClass = attraction.indoor === 'Yes' ? 'yes' : (attraction.indoor === 'No' ? 'no' : 'partially');
+                
+                row.innerHTML = `
+                    <td class="attraction-name"><a href="${attraction.website}" target="_blank">${attraction.name}</a></td>
+                    <td class="${diaperClass}">${attraction.diaper}</td>
+                    <td class="${strollerClass}">${attraction.stroller}</td>
+                    <td class="${indoorClass}">${attraction.indoor}</td>
+                    <td>${attraction.cost}</td>
+                    <td>${attraction.walking}</td>
+                    <td>${attraction.time}</td>
+                    <td>${attraction.experience}</td>
+                    <td>${attraction.region}</td>
                 `;
-
-                attractionsContainer.appendChild(card);
+                
+                tableBody.appendChild(row);
             });
         }
-
-        // Initial display on page load
-        displayAttractions(attractions);
+        
+        // Function to filter attractions based on selected filters
+        function filterAttractions() {
+            const searchTerm = document.getElementById('searchBox').value.toLowerCase();
+            const checkboxes = document.querySelectorAll('.filter-checkbox:checked');
+            
+            // Create filters object to store all selected filters by column
+            const filters = {};
+            
+            checkboxes.forEach(checkbox => {
+                const column = checkbox.dataset.column;
+                const value = checkbox.dataset.value;
+                
+                if (!filters[column]) {
+                    filters[column] = [];
+                }
+                
+                filters[column].push(value);
+            });
+            
+            // Filter attractions based on selected filters and search term
+            const filteredAttractions = attractions.filter(attraction => {
+                // Text search filter
+                if (searchTerm && !attraction.name.toLowerCase().includes(searchTerm) && 
+                    !attraction.experience.toLowerCase().includes(searchTerm) && 
+                    !attraction.region.toLowerCase().includes(searchTerm)) {
+                    return false;
+                }
+                
+                // Apply filters for each column
+                for (const column in filters) {
+                    if (filters[column].length > 0) {
+                        // Special handling for experience field which can have multiple values
+                        if (column === 'experience') {
+                            const attractionExperiences = attraction[column].split(', ');
+                            let match = false;
+                            
+                            for (const value of filters[column]) {
+                                if (attractionExperiences.some(exp => exp.includes(value))) {
+                                    match = true;
+                                    break;
+                                }
+                            }
+                            
+                            if (!match) return false;
+                        } else {
+                            // For other fields, check if the attraction's value is in the selected filters
+                            if (!filters[column].some(value => {
+                                // Handle special case for stroller accessibility
+                                if (column === 'stroller' && value === 'Yes' && attraction[column] === 'Yes (partially)') {
+                                    return true;
+                                }
+                                return attraction[column] === value || 
+                                       (attraction[column].includes(value) && column === 'indoor');
+                            })) {
+                                return false;
+                            }
+                        }
+                    }
+                }
+                
+                return true;
+            });
+            
+            // Update the table with filtered attractions
+            populateTable(filteredAttractions);
+        }
+        
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Populate table on page load
+            populateTable(attractions);
+            
+            // Add event listeners for filter buttons
+            document.getElementById('applyFilters').addEventListener('click', filterAttractions);
+            
+            // Add event listener for reset button
+            document.getElementById('resetFilters').addEventListener('click', function() {
+                // Clear checkboxes
+                document.querySelectorAll('.filter-checkbox').forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+                
+                // Clear search box
+                document.getElementById('searchBox').value = '';
+                
+                // Reset the table to show all attractions
+                populateTable(attractions);
+            });
+            
+            // Add event listener for search box
+            document.getElementById('searchBox').addEventListener('input', filterAttractions);
+        });
     </script>
 </body>
 </html>
