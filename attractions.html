@@ -451,7 +451,6 @@ th {
                     <div class="filter-options">
                         <label><input type="checkbox" class="filter-checkbox" data-column="time" data-value="Day"> Day</label>
                         <label><input type="checkbox" class="filter-checkbox" data-column="time" data-value="Night"> Night</label>
-                        <label><input type="checkbox" class="filter-checkbox" data-column="time" data-value="Both"> Both</label>
                     </div>
                 </div>
                 
@@ -1078,6 +1077,19 @@ th {
                             
                             for (const value of filters[column]) {
                                 if (attractionExperiences.some(exp => exp.includes(value))) {
+                                    match = true;
+                                    break;
+                                }
+                            }
+                            
+                            if (!match) return false;
+                        }
+                        // Special handling for time field to include "Both" attractions
+                        else if (column === 'time') {
+                            let match = false;
+                            
+                            for (const value of filters[column]) {
+                                if (attraction[column] === value || attraction[column] === 'Both') {
                                     match = true;
                                     break;
                                 }
