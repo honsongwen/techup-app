@@ -325,6 +325,90 @@
             font-weight: 500;
         }
         
+        /* Games Section */
+        .games-section {
+            padding: 80px 0;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            color: white;
+            text-align: center;
+            position: relative;
+            margin: 40px 20px;
+            border-radius: 24px;
+            box-shadow: var(--shadow-xl);
+        }
+
+        .games-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+        }
+        
+        .games-section h2 {
+            margin-bottom: 20px;
+            font-size: clamp(2rem, 4vw, 2.8rem);
+            font-weight: 700;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .games-section p {
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.7;
+        }
+
+        .games-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e53 100%);
+            color: white;
+            padding: 18px 48px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-xl);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .games-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .games-button:hover::before {
+            left: 100%;
+        }
+        
+        .games-button:hover {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 25px 50px rgba(255, 107, 107, 0.4);
+            background: linear-gradient(135deg, #ff5252 0%, #ff7043 100%);
+        }
+        
         /* CTA Section */
         .cta-section {
             padding: 100px 20px;
@@ -543,6 +627,16 @@
                 padding: 60px 20px;
             }
 
+            .games-section {
+                margin: 20px 16px;
+                padding: 60px 20px;
+            }
+
+            .games-button {
+                padding: 16px 36px;
+                font-size: 1.1rem;
+            }
+
             .cta-section {
                 margin: 20px 16px;
                 padding: 80px 20px;
@@ -575,6 +669,11 @@
             }
 
             .cta-button-white {
+                padding: 14px 28px;
+                font-size: 1rem;
+            }
+
+            .games-button {
                 padding: 14px 28px;
                 font-size: 1rem;
             }
@@ -678,7 +777,7 @@
             </div>
         </div>
     </section>
-    
+
     <!-- CTA Section -->
     <section class="cta-section">
         <div class="container">
@@ -687,6 +786,15 @@
                 <p>Our comprehensive attraction filter tool has all the information you need in one place, saving you time and effort when planning activities for your guests.</p>
                 <a href="attractions.html" class="cta-button-white">Start Exploring Now</a>
             </div>
+        </div>
+    </section>
+
+    <!-- Games Section -->
+    <section class="games-section">
+        <div class="container">
+            <h2>Keep the Little Ones Happy</h2>
+            <p>Fun games to distract cranky children during your Singapore adventure. Perfect for waiting times, transportation, or when you need a quick break!</p>
+            <a href="games/index.html" class="games-button">🎮 Play Games</a>
         </div>
     </section>
     
@@ -770,5 +878,4 @@
             });
         });
     </script>
-</body>
-</html>
+    
