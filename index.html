@@ -220,12 +220,6 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
         
-        /* Features Section */
-        .features {
-            padding: 100px 20px;
-            position: relative;
-        }
-        
         .section-title {
             text-align: center;
             font-size: clamp(2.2rem, 5vw, 3.2rem);
@@ -245,81 +239,6 @@
             margin: 20px auto 0;
             border-radius: 2px;
             box-shadow: var(--shadow-md);
-        }
-        
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 30px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        .feature-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 24px;
-            overflow: hidden;
-            box-shadow: var(--shadow-xl);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-        }
-
-        .feature-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: var(--gradient-primary);
-        }
-        
-        .feature-card:hover {
-            transform: translateY(-10px) scale(1.02);
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
-            background: rgba(255, 255, 255, 0.98);
-        }
-        
-        .feature-icon {
-            background: var(--gradient-primary);
-            color: white;
-            height: 120px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 3.5rem;
-            position: relative;
-        }
-
-        .feature-icon::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-        }
-        
-        .feature-content {
-            padding: 36px 32px;
-        }
-        
-        .feature-content h3 {
-            margin-bottom: 20px;
-            color: var(--neutral-800);
-            font-size: 1.6rem;
-            font-weight: 700;
-            line-height: 1.3;
-        }
-        
-        .feature-content p {
-            color: var(--neutral-600);
-            line-height: 1.7;
-            font-size: 1.05rem;
-            font-weight: 500;
         }
         
         /* How It Works Section */
@@ -606,15 +525,6 @@
                 margin-bottom: 60px;
             }
             
-            .features-grid {
-                grid-template-columns: 1fr;
-                gap: 24px;
-            }
-
-            .features {
-                padding: 80px 16px;
-            }
-
             .how-it-works {
                 padding: 80px 16px;
             }
@@ -667,10 +577,6 @@
             .cta-button-white {
                 padding: 14px 28px;
                 font-size: 1rem;
-            }
-
-            .feature-content {
-                padding: 28px 24px;
             }
 
             .step {
@@ -743,44 +649,6 @@
                 <script>
                 !function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src='https://weatherwidget.io/js/widget.min.js';fjs.parentNode.insertBefore(js,fjs);}}(document,'script','weatherwidget-io-js');
                 </script>
-            </div>
-        </div>
-    </section>
-    
-    <!-- Features Section -->
-    <section class="features">
-        <div class="container">
-            <h2 class="section-title">Why Use Our Tool</h2>
-            <div class="features-grid">
-                <div class="feature-card slide-in">
-                    <div class="feature-icon">
-                        <span>🔍</span>
-                    </div>
-                    <div class="feature-content">
-                        <h3>Smart Filtering</h3>
-                        <p>Filter attractions by shelter, cost, walking requirements, region, and type of experience to find the perfect spots for your guests.</p>
-                    </div>
-                </div>
-                
-                <div class="feature-card slide-in">
-                    <div class="feature-icon">
-                        <span>👪</span>
-                    </div>
-                    <div class="feature-content">
-                        <h3>Family Friendly</h3>
-                        <p>Find attractions with facilities like diaper changing rooms and wheelchair accessibility for all types of visitors.</p>
-                    </div>
-                </div>
-                
-                <div class="feature-card slide-in">
-                    <div class="feature-icon">
-                        <span>🕒</span>
-                    </div>
-                    <div class="feature-content">
-                        <h3>Time Optimization</h3>
-                        <p>Quickly find attractions suitable for day or night visits to maximize your itinerary planning.</p>
-                    </div>
-                </div>
             </div>
         </div>
     </section>
@@ -882,10 +750,10 @@
             window.addEventListener('scroll', checkScroll);
 
             // Add some extra interactivity
-            const cards = document.querySelectorAll('.feature-card, .step');
+            const cards = document.querySelectorAll('.step');
             cards.forEach(card => {
                 card.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-10px) scale(1.02)';
+                    this.style.transform = 'translateY(-8px) scale(1.02)';
                 });
                 
                 card.addEventListener('mouseleave', function() {
