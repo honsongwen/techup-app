@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Easy Flying Red Bird</title>
+    <title>Flying Red Bird</title>
     <style>
         * {
             margin: 0;
@@ -98,18 +98,6 @@
             font-size: 18px;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
         }
-
-        #difficultyInfo {
-            position: absolute;
-            top: 70px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: #FFD700;
-            text-align: center;
-            font-size: 16px;
-            font-weight: bold;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
-        }
     </style>
 </head>
 <body>
@@ -117,15 +105,13 @@
     
     <div id="gameUI">
         <div id="score">0</div>
-        <div id="difficultyInfo">EASY MODE</div>
         <div id="gameOver">
             <h1>Game Over!</h1>
             <p>Final Score: <span id="finalScore">0</span></p>
             <button id="restartBtn">Fly Again</button>
         </div>
         <div id="instructions">
-            Tap to make the bird fly!<br>
-            <small>Easy mode: Slower speed, bigger gaps, gentler physics</small>
+            Tap to make the bird fly!
         </div>
     </div>
 
@@ -159,28 +145,28 @@
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
 
-        // Game variables - MADE EASIER
+        // Game variables
         let gameState = 'ready'; // ready, playing, gameOver
         let score = 0;
-        let gameSpeed = 1; // Reduced from 1.5 to 1 (slower)
+        let gameSpeed = 1;
 
-        // Bird object - MADE EASIER
+        // Bird object
         const bird = {
             x: 80,
             y: 300,
             width: 40,
             height: 30,
             velocity: 0,
-            gravity: 0.15, // Reduced from 0.25 to 0.15 (gentler falling)
-            jumpStrength: -5.5, // Reduced from -7 to -5.5 (more controlled jumps)
+            gravity: 0.15,
+            jumpStrength: -5.5,
             rotation: 0,
             wingPhase: 0 // For wing animation
         };
 
-        // Obstacles array - MADE EASIER
+        // Obstacles array
         let obstacles = [];
-        const obstacleWidth = 50; // Reduced from 60 to 50 (narrower obstacles)
-        const obstacleGap = 250; // Increased from 180 to 250 (much bigger gaps)
+        const obstacleWidth = 50;
+        const obstacleGap = 250;
         let obstacleTimer = 0;
 
         // Particles for effects
@@ -285,11 +271,10 @@
         }
 
         function createObstacle() {
-            // MADE EASIER - bigger gaps and more forgiving positioning
-            const minGap = 280; // Increased from 220 to 280
-            const maxGap = 340; // Increased from 280 to 340
+            const minGap = 280;
+            const maxGap = 340;
             const gap = Math.random() * (maxGap - minGap) + minGap;
-            const topHeight = Math.random() * (canvas.height - gap - 250) + 100; // More centered gaps
+            const topHeight = Math.random() * (canvas.height - gap - 250) + 100;
             
             obstacles.push({
                 x: canvas.width,
@@ -305,17 +290,17 @@
             bird.velocity += bird.gravity;
             bird.y += bird.velocity;
             
-            // Rotation based on velocity - more gentle
+            // Rotation based on velocity
             bird.rotation = Math.min(Math.max(bird.velocity * 0.03, -0.3), 0.5);
             
-            // Check bounds - MADE EASIER with bounce effect instead of instant death
+            // Check bounds with bounce effect
             if (bird.y < 0) {
                 bird.y = 0;
-                bird.velocity = Math.abs(bird.velocity) * 0.3; // Gentle bounce
+                bird.velocity = Math.abs(bird.velocity) * 0.3;
             }
             if (bird.y + bird.height > canvas.height) {
                 bird.y = canvas.height - bird.height;
-                bird.velocity = -Math.abs(bird.velocity) * 0.3; // Gentle bounce
+                bird.velocity = -Math.abs(bird.velocity) * 0.3;
             }
         }
 
@@ -332,8 +317,8 @@
                     score++;
                     scoreElement.textContent = score;
                     
-                    // Increase game speed more gradually - MADE EASIER
-                    gameSpeed += 0.01; // Reduced from 0.02 to 0.01
+                    // Increase game speed gradually
+                    gameSpeed += 0.01;
                     
                     // Create particles for score
                     createScoreParticles();
@@ -345,9 +330,9 @@
                 }
             }
             
-            // Create new obstacles - MADE EASIER (more time between obstacles)
+            // Create new obstacles
             obstacleTimer++;
-            if (obstacleTimer > 200) { // Increased from 150 to 200
+            if (obstacleTimer > 200) {
                 createObstacle();
                 obstacleTimer = 0;
             }
@@ -357,7 +342,7 @@
             if (gameState !== 'playing') return;
             
             for (let obstacle of obstacles) {
-                // MADE EASIER - smaller collision box for more forgiving gameplay
+                // Forgiving collision detection
                 const birdCollisionBox = {
                     x: bird.x + 5,
                     y: bird.y + 5,
@@ -375,13 +360,13 @@
         }
 
         function createScoreParticles() {
-            for (let i = 0; i < 8; i++) { // More particles for better feedback
+            for (let i = 0; i < 8; i++) {
                 particles.push({
                     x: bird.x + bird.width/2,
                     y: bird.y + bird.height/2,
                     vx: (Math.random() - 0.5) * 6,
                     vy: (Math.random() - 0.5) * 6,
-                    life: 40, // Longer lasting particles
+                    life: 40,
                     color: '#FFD700'
                 });
             }
@@ -434,7 +419,7 @@
         function resetGame() {
             gameState = 'ready';
             score = 0;
-            gameSpeed = 1; // Reset to easier speed
+            gameSpeed = 1;
             scoreElement.textContent = '0';
             gameOverDiv.style.display = 'none';
             instructionsDiv.style.display = 'block';
