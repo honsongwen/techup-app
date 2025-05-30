@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Easy Jumping Green Bus</title>
+    <title>Easy Flying Red Bird</title>
     <style>
         * {
             margin: 0;
@@ -74,7 +74,7 @@
         #restartBtn {
             padding: 15px 30px;
             font-size: 20px;
-            background: #4CAF50;
+            background: #DC143C;
             color: white;
             border: none;
             border-radius: 10px;
@@ -84,7 +84,7 @@
         }
 
         #restartBtn:hover {
-            background: #45a049;
+            background: #B22222;
             transform: translateY(-2px);
         }
 
@@ -121,10 +121,10 @@
         <div id="gameOver">
             <h1>Game Over!</h1>
             <p>Final Score: <span id="finalScore">0</span></p>
-            <button id="restartBtn">Play Again</button>
+            <button id="restartBtn">Fly Again</button>
         </div>
         <div id="instructions">
-            Tap to make the bus jump!<br>
+            Tap to make the bird fly!<br>
             <small>Easy mode: Slower speed, bigger gaps, gentler physics</small>
         </div>
     </div>
@@ -164,16 +164,17 @@
         let score = 0;
         let gameSpeed = 1; // Reduced from 1.5 to 1 (slower)
 
-        // Bus object - MADE EASIER
-        const bus = {
+        // Bird object - MADE EASIER
+        const bird = {
             x: 80,
             y: 300,
-            width: 60,
-            height: 40,
+            width: 40,
+            height: 30,
             velocity: 0,
             gravity: 0.15, // Reduced from 0.25 to 0.15 (gentler falling)
             jumpStrength: -5.5, // Reduced from -7 to -5.5 (more controlled jumps)
-            rotation: 0
+            rotation: 0,
+            wingPhase: 0 // For wing animation
         };
 
         // Obstacles array - MADE EASIER
@@ -185,82 +186,101 @@
         // Particles for effects
         let particles = [];
 
-        function drawBus() {
+        function drawBird() {
             ctx.save();
-            ctx.translate(bus.x + bus.width/2, bus.y + bus.height/2);
-            ctx.rotate(bus.rotation);
+            ctx.translate(bird.x + bird.width/2, bird.y + bird.height/2);
+            ctx.rotate(bird.rotation);
             
-            // Double decker bus body - lower deck
-            ctx.fillStyle = '#228B22';
-            ctx.fillRect(-bus.width/2, -10, bus.width, 25);
-            
-            // Double decker bus body - upper deck
-            ctx.fillStyle = '#32CD32';
-            ctx.fillRect(-bus.width/2, -bus.height/2, bus.width, 20);
-            
-            // Lower deck windows
-            ctx.fillStyle = '#87CEEB';
-            ctx.fillRect(-bus.width/2 + 5, -5, 12, 8);
-            ctx.fillRect(-bus.width/2 + 20, -5, 12, 8);
-            ctx.fillRect(-bus.width/2 + 35, -5, 12, 8);
-            
-            // Upper deck windows
-            ctx.fillStyle = '#87CEEB';
-            ctx.fillRect(-bus.width/2 + 5, -bus.height/2 + 3, 12, 8);
-            ctx.fillRect(-bus.width/2 + 20, -bus.height/2 + 3, 12, 8);
-            ctx.fillRect(-bus.width/2 + 35, -bus.width/2 + 3, 12, 8);
-            
-            // Front windshield (lower)
-            ctx.fillStyle = '#87CEEB';
-            ctx.fillRect(bus.width/2 - 8, -8, 6, 10);
-            
-            // Front windshield (upper) 
-            ctx.fillStyle = '#87CEEB';
-            ctx.fillRect(bus.width/2 - 8, -bus.height/2 + 2, 6, 10);
-            
-            // Bus wheels
-            ctx.fillStyle = '#333';
+            // Bird body
+            ctx.fillStyle = '#DC143C'; // Crimson red
             ctx.beginPath();
-            ctx.arc(-bus.width/2 + 12, 12, 8, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.beginPath();
-            ctx.arc(bus.width/2 - 12, 12, 8, 0, Math.PI * 2);
+            ctx.ellipse(0, 0, bird.width/2, bird.height/2, 0, 0, Math.PI * 2);
             ctx.fill();
             
-            // Double decker stripe
-            ctx.fillStyle = '#FFD700';
-            ctx.fillRect(-bus.width/2, -12, bus.width, 2);
+            // Bird belly (lighter red)
+            ctx.fillStyle = '#FF6347'; // Tomato red
+            ctx.beginPath();
+            ctx.ellipse(2, 5, bird.width/3, bird.height/3, 0, 0, Math.PI * 2);
+            ctx.fill();
             
-            // Bus door
-            ctx.fillStyle = '#8B4513';
-            ctx.fillRect(-bus.width/2 + 50, -8, 8, 15);
+            // Bird head
+            ctx.fillStyle = '#B22222'; // Fire brick red
+            ctx.beginPath();
+            ctx.arc(-bird.width/4, -bird.height/4, bird.height/2.5, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Bird beak
+            ctx.fillStyle = '#FF8C00'; // Dark orange
+            ctx.beginPath();
+            ctx.moveTo(-bird.width/2 + 2, -bird.height/4);
+            ctx.lineTo(-bird.width/2 - 8, -bird.height/4 - 3);
+            ctx.lineTo(-bird.width/2 - 8, -bird.height/4 + 3);
+            ctx.closePath();
+            ctx.fill();
+            
+            // Bird eye
+            ctx.fillStyle = 'white';
+            ctx.beginPath();
+            ctx.arc(-bird.width/4 + 3, -bird.height/3, 6, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Bird pupil
+            ctx.fillStyle = 'black';
+            ctx.beginPath();
+            ctx.arc(-bird.width/4 + 3, -bird.height/3, 3, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Wings (animated)
+            bird.wingPhase += 0.3;
+            const wingOffset = Math.sin(bird.wingPhase) * 5;
+            
+            ctx.fillStyle = '#8B0000'; // Dark red
+            ctx.beginPath();
+            ctx.ellipse(bird.width/4, wingOffset, bird.width/3, bird.height/4, -0.3, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Wing details
+            ctx.fillStyle = '#A0522D'; // Sienna brown
+            ctx.beginPath();
+            ctx.ellipse(bird.width/4 + 3, wingOffset, bird.width/5, bird.height/6, -0.3, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Bird tail
+            ctx.fillStyle = '#8B0000';
+            ctx.beginPath();
+            ctx.ellipse(bird.width/3, 0, bird.width/4, bird.height/3, 0.5, 0, Math.PI * 2);
+            ctx.fill();
             
             ctx.restore();
         }
 
         function drawObstacle(obstacle) {
-            // Top building
+            // Top pipe/tree
             ctx.fillStyle = '#8B4513';
             ctx.fillRect(obstacle.x, 0, obstacleWidth, obstacle.topHeight);
             
-            // Building windows
-            ctx.fillStyle = '#FFD700';
-            for (let i = 10; i < obstacle.topHeight - 10; i += 25) {
-                for (let j = 10; j < obstacleWidth - 10; j += 15) {
-                    ctx.fillRect(obstacle.x + j, i, 8, 8);
-                }
-            }
+            // Pipe cap (top)
+            ctx.fillStyle = '#A0522D';
+            ctx.fillRect(obstacle.x - 5, obstacle.topHeight - 20, obstacleWidth + 10, 20);
             
-            // Bottom building
+            // Bottom pipe/tree
             ctx.fillStyle = '#8B4513';
             ctx.fillRect(obstacle.x, obstacle.bottomY, obstacleWidth, canvas.height - obstacle.bottomY);
             
-            // Bottom building windows
-            ctx.fillStyle = '#FFD700';
-            for (let i = obstacle.bottomY + 10; i < canvas.height - 10; i += 25) {
-                for (let j = 10; j < obstacleWidth - 10; j += 15) {
-                    ctx.fillRect(obstacle.x + j, i, 8, 8);
-                }
+            // Pipe cap (bottom)
+            ctx.fillStyle = '#A0522D';
+            ctx.fillRect(obstacle.x - 5, obstacle.bottomY, obstacleWidth + 10, 20);
+            
+            // Add some texture to pipes
+            ctx.fillStyle = '#654321';
+            for (let i = 0; i < obstacle.topHeight; i += 15) {
+                ctx.fillRect(obstacle.x + 5, i, 3, 10);
+                ctx.fillRect(obstacle.x + obstacleWidth - 8, i, 3, 10);
+            }
+            
+            for (let i = obstacle.bottomY; i < canvas.height; i += 15) {
+                ctx.fillRect(obstacle.x + 5, i, 3, 10);
+                ctx.fillRect(obstacle.x + obstacleWidth - 8, i, 3, 10);
             }
         }
 
@@ -279,23 +299,23 @@
             });
         }
 
-        function updateBus() {
+        function updateBird() {
             if (gameState !== 'playing') return;
             
-            bus.velocity += bus.gravity;
-            bus.y += bus.velocity;
+            bird.velocity += bird.gravity;
+            bird.y += bird.velocity;
             
             // Rotation based on velocity - more gentle
-            bus.rotation = Math.min(Math.max(bus.velocity * 0.03, -0.3), 0.3);
+            bird.rotation = Math.min(Math.max(bird.velocity * 0.03, -0.3), 0.5);
             
             // Check bounds - MADE EASIER with bounce effect instead of instant death
-            if (bus.y < 0) {
-                bus.y = 0;
-                bus.velocity = Math.abs(bus.velocity) * 0.3; // Gentle bounce
+            if (bird.y < 0) {
+                bird.y = 0;
+                bird.velocity = Math.abs(bird.velocity) * 0.3; // Gentle bounce
             }
-            if (bus.y + bus.height > canvas.height) {
-                bus.y = canvas.height - bus.height;
-                bus.velocity = -Math.abs(bus.velocity) * 0.3; // Gentle bounce
+            if (bird.y + bird.height > canvas.height) {
+                bird.y = canvas.height - bird.height;
+                bird.velocity = -Math.abs(bird.velocity) * 0.3; // Gentle bounce
             }
         }
 
@@ -307,7 +327,7 @@
                 obstacles[i].x -= gameSpeed;
                 
                 // Check for scoring
-                if (!obstacles[i].passed && obstacles[i].x + obstacleWidth < bus.x) {
+                if (!obstacles[i].passed && obstacles[i].x + obstacleWidth < bird.x) {
                     obstacles[i].passed = true;
                     score++;
                     scoreElement.textContent = score;
@@ -338,16 +358,16 @@
             
             for (let obstacle of obstacles) {
                 // MADE EASIER - smaller collision box for more forgiving gameplay
-                const busCollisionBox = {
-                    x: bus.x + 5,
-                    y: bus.y + 5,
-                    width: bus.width - 10,
-                    height: bus.height - 10
+                const birdCollisionBox = {
+                    x: bird.x + 5,
+                    y: bird.y + 5,
+                    width: bird.width - 10,
+                    height: bird.height - 10
                 };
                 
-                if (busCollisionBox.x < obstacle.x + obstacleWidth &&
-                    busCollisionBox.x + busCollisionBox.width > obstacle.x &&
-                    (busCollisionBox.y < obstacle.topHeight || busCollisionBox.y + busCollisionBox.height > obstacle.bottomY)) {
+                if (birdCollisionBox.x < obstacle.x + obstacleWidth &&
+                    birdCollisionBox.x + birdCollisionBox.width > obstacle.x &&
+                    (birdCollisionBox.y < obstacle.topHeight || birdCollisionBox.y + birdCollisionBox.height > obstacle.bottomY)) {
                     gameOver();
                     break;
                 }
@@ -357,8 +377,8 @@
         function createScoreParticles() {
             for (let i = 0; i < 8; i++) { // More particles for better feedback
                 particles.push({
-                    x: bus.x + bus.width/2,
-                    y: bus.y + bus.height/2,
+                    x: bird.x + bird.width/2,
+                    y: bird.y + bird.height/2,
                     vx: (Math.random() - 0.5) * 6,
                     vy: (Math.random() - 0.5) * 6,
                     life: 40, // Longer lasting particles
@@ -389,20 +409,20 @@
             });
         }
 
-        function jump() {
+        function fly() {
             if (gameState === 'ready') {
                 startGame();
             }
             
             if (gameState === 'playing') {
-                bus.velocity = bus.jumpStrength;
+                bird.velocity = bird.jumpStrength;
             }
         }
 
         function startGame() {
             gameState = 'playing';
             instructionsDiv.style.display = 'none';
-            bus.velocity = bus.jumpStrength;
+            bird.velocity = bird.jumpStrength;
         }
 
         function gameOver() {
@@ -419,9 +439,10 @@
             gameOverDiv.style.display = 'none';
             instructionsDiv.style.display = 'block';
             
-            bus.y = 300;
-            bus.velocity = 0;
-            bus.rotation = 0;
+            bird.y = 300;
+            bird.velocity = 0;
+            bird.rotation = 0;
+            bird.wingPhase = 0;
             
             obstacles = [];
             particles = [];
@@ -447,24 +468,24 @@
             ctx.fill();
             
             // Update game objects
-            updateBus();
+            updateBird();
             updateObstacles();
             updateParticles();
             checkCollisions();
             
             // Draw everything
             obstacles.forEach(drawObstacle);
-            drawBus();
+            drawBird();
             drawParticles();
             
             requestAnimationFrame(gameLoop);
         }
 
         // Event listeners
-        canvas.addEventListener('click', jump);
+        canvas.addEventListener('click', fly);
         canvas.addEventListener('touchstart', (e) => {
             e.preventDefault();
-            jump();
+            fly();
         });
 
         restartBtn.addEventListener('click', resetGame);
