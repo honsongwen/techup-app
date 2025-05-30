@@ -186,55 +186,55 @@
             // Bird belly (lighter red)
             ctx.fillStyle = '#FF6347'; // Tomato red
             ctx.beginPath();
-            ctx.ellipse(2, 5, bird.width/3, bird.height/3, 0, 0, Math.PI * 2);
+            ctx.ellipse(-2, 5, bird.width/3, bird.height/3, 0, 0, Math.PI * 2);
             ctx.fill();
             
-            // Bird head
+            // Bird head (now positioned to the right)
             ctx.fillStyle = '#B22222'; // Fire brick red
             ctx.beginPath();
-            ctx.arc(-bird.width/4, -bird.height/4, bird.height/2.5, 0, Math.PI * 2);
+            ctx.arc(bird.width/4, -bird.height/4, bird.height/2.5, 0, Math.PI * 2);
             ctx.fill();
             
-            // Bird beak
+            // Bird beak (now pointing right)
             ctx.fillStyle = '#FF8C00'; // Dark orange
             ctx.beginPath();
-            ctx.moveTo(-bird.width/2 + 2, -bird.height/4);
-            ctx.lineTo(-bird.width/2 - 8, -bird.height/4 - 3);
-            ctx.lineTo(-bird.width/2 - 8, -bird.height/4 + 3);
+            ctx.moveTo(bird.width/2 - 2, -bird.height/4);
+            ctx.lineTo(bird.width/2 + 8, -bird.height/4 - 3);
+            ctx.lineTo(bird.width/2 + 8, -bird.height/4 + 3);
             ctx.closePath();
             ctx.fill();
             
-            // Bird eye
+            // Bird eye (positioned on right-facing head)
             ctx.fillStyle = 'white';
             ctx.beginPath();
-            ctx.arc(-bird.width/4 + 3, -bird.height/3, 6, 0, Math.PI * 2);
+            ctx.arc(bird.width/4 - 3, -bird.height/3, 6, 0, Math.PI * 2);
             ctx.fill();
             
             // Bird pupil
             ctx.fillStyle = 'black';
             ctx.beginPath();
-            ctx.arc(-bird.width/4 + 3, -bird.height/3, 3, 0, Math.PI * 2);
+            ctx.arc(bird.width/4 - 3, -bird.height/3, 3, 0, Math.PI * 2);
             ctx.fill();
             
-            // Wings (animated)
+            // Wings (animated, positioned for right-facing bird)
             bird.wingPhase += 0.3;
             const wingOffset = Math.sin(bird.wingPhase) * 5;
             
             ctx.fillStyle = '#8B0000'; // Dark red
             ctx.beginPath();
-            ctx.ellipse(bird.width/4, wingOffset, bird.width/3, bird.height/4, -0.3, 0, Math.PI * 2);
+            ctx.ellipse(-bird.width/4, wingOffset, bird.width/3, bird.height/4, 0.3, 0, Math.PI * 2);
             ctx.fill();
             
             // Wing details
             ctx.fillStyle = '#A0522D'; // Sienna brown
             ctx.beginPath();
-            ctx.ellipse(bird.width/4 + 3, wingOffset, bird.width/5, bird.height/6, -0.3, 0, Math.PI * 2);
+            ctx.ellipse(-bird.width/4 - 3, wingOffset, bird.width/5, bird.height/6, 0.3, 0, Math.PI * 2);
             ctx.fill();
             
-            // Bird tail
+            // Bird tail (positioned for right-facing bird)
             ctx.fillStyle = '#8B0000';
             ctx.beginPath();
-            ctx.ellipse(bird.width/3, 0, bird.width/4, bird.height/3, 0.5, 0, Math.PI * 2);
+            ctx.ellipse(-bird.width/3, 0, bird.width/4, bird.height/3, -0.5, 0, Math.PI * 2);
             ctx.fill();
             
             ctx.restore();
@@ -290,8 +290,20 @@
             bird.velocity += bird.gravity;
             bird.y += bird.velocity;
             
-            // Rotation based on velocity
-            bird.rotation = Math.min(Math.max(bird.velocity * 0.03, -0.3), 0.5);
+            // Enhanced rotation based on velocity for better direction facing
+            // Map velocity to rotation angle - more dramatic rotation for better visual effect
+            const maxRotation = 0.8; // Maximum rotation in radians
+            const velocityScale = 0.08; // How much velocity affects rotation
+            
+            // Calculate target rotation based on velocity
+            let targetRotation = bird.velocity * velocityScale;
+            
+            // Clamp rotation to reasonable limits
+            targetRotation = Math.max(-maxRotation, Math.min(maxRotation, targetRotation));
+            
+            // Smooth rotation transition for more natural movement
+            const rotationSpeed = 0.15;
+            bird.rotation += (targetRotation - bird.rotation) * rotationSpeed;
             
             // Check bounds with bounce effect
             if (bird.y < 0) {
