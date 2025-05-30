@@ -81,10 +81,59 @@
             cursor: pointer;
             box-shadow: 0 4px 8px rgba(0,0,0,0.3);
             transition: all 0.2s;
+            margin-right: 10px;
         }
 
         #restartBtn:hover {
             background: #B22222;
+            transform: translateY(-2px);
+        }
+
+        #backBtn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 12px 20px;
+            font-size: 16px;
+            background: #228B22;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            transition: all 0.2s;
+            pointer-events: all;
+            text-decoration: none;
+            display: inline-block;
+            font-family: 'Arial', sans-serif;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        #backBtn:hover {
+            background: #32CD32;
+            transform: translateY(-2px);
+        }
+
+        #backToPlaygroundBtn {
+            padding: 15px 30px;
+            font-size: 20px;
+            background: #228B22;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+            font-family: 'Arial', sans-serif;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        #backToPlaygroundBtn:hover {
+            background: #32CD32;
             transform: translateY(-2px);
         }
 
@@ -104,11 +153,13 @@
     <canvas id="gameCanvas" width="400" height="600"></canvas>
     
     <div id="gameUI">
+        <a href="index.html" id="backBtn">← Back to Playground</a>
         <div id="score">0</div>
         <div id="gameOver">
             <h1>Game Over!</h1>
             <p>Final Score: <span id="finalScore">0</span></p>
             <button id="restartBtn">Fly Again</button>
+            <a href="index.html" id="backToPlaygroundBtn">Back to Playground</a>
         </div>
         <div id="instructions">
             Tap to make the bird fly!
