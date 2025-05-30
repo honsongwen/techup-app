@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jumping Green Bus</title>
+    <title>Easy Jumping Green Bus</title>
     <style>
         * {
             margin: 0;
@@ -98,6 +98,18 @@
             font-size: 18px;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
         }
+
+        #difficultyInfo {
+            position: absolute;
+            top: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #FFD700;
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+        }
     </style>
 </head>
 <body>
@@ -105,13 +117,15 @@
     
     <div id="gameUI">
         <div id="score">0</div>
+        <div id="difficultyInfo">EASY MODE</div>
         <div id="gameOver">
             <h1>Game Over!</h1>
             <p>Final Score: <span id="finalScore">0</span></p>
             <button id="restartBtn">Play Again</button>
         </div>
         <div id="instructions">
-            Tap to make the bus jump!
+            Tap to make the bus jump!<br>
+            <small>Easy mode: Slower speed, bigger gaps, gentler physics</small>
         </div>
     </div>
 
@@ -145,27 +159,27 @@
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
 
-        // Game variables
+        // Game variables - MADE EASIER
         let gameState = 'ready'; // ready, playing, gameOver
         let score = 0;
-        let gameSpeed = 1.5;
+        let gameSpeed = 1; // Reduced from 1.5 to 1 (slower)
 
-        // Bus object
+        // Bus object - MADE EASIER
         const bus = {
             x: 80,
             y: 300,
             width: 60,
             height: 40,
             velocity: 0,
-            gravity: 0.25,
-            jumpStrength: -7,
+            gravity: 0.15, // Reduced from 0.25 to 0.15 (gentler falling)
+            jumpStrength: -5.5, // Reduced from -7 to -5.5 (more controlled jumps)
             rotation: 0
         };
 
-        // Obstacles array
+        // Obstacles array - MADE EASIER
         let obstacles = [];
-        const obstacleWidth = 60;
-        const obstacleGap = 180;
+        const obstacleWidth = 50; // Reduced from 60 to 50 (narrower obstacles)
+        const obstacleGap = 250; // Increased from 180 to 250 (much bigger gaps)
         let obstacleTimer = 0;
 
         // Particles for effects
@@ -251,10 +265,11 @@
         }
 
         function createObstacle() {
-            const minGap = 220;
-            const maxGap = 280;
+            // MADE EASIER - bigger gaps and more forgiving positioning
+            const minGap = 280; // Increased from 220 to 280
+            const maxGap = 340; // Increased from 280 to 340
             const gap = Math.random() * (maxGap - minGap) + minGap;
-            const topHeight = Math.random() * (canvas.height - gap - 200) + 80;
+            const topHeight = Math.random() * (canvas.height - gap - 250) + 100; // More centered gaps
             
             obstacles.push({
                 x: canvas.width,
@@ -270,12 +285,17 @@
             bus.velocity += bus.gravity;
             bus.y += bus.velocity;
             
-            // Rotation based on velocity
-            bus.rotation = Math.min(Math.max(bus.velocity * 0.05, -0.5), 0.5);
+            // Rotation based on velocity - more gentle
+            bus.rotation = Math.min(Math.max(bus.velocity * 0.03, -0.3), 0.3);
             
-            // Check bounds
-            if (bus.y < 0 || bus.y + bus.height > canvas.height) {
-                gameOver();
+            // Check bounds - MADE EASIER with bounce effect instead of instant death
+            if (bus.y < 0) {
+                bus.y = 0;
+                bus.velocity = Math.abs(bus.velocity) * 0.3; // Gentle bounce
+            }
+            if (bus.y + bus.height > canvas.height) {
+                bus.y = canvas.height - bus.height;
+                bus.velocity = -Math.abs(bus.velocity) * 0.3; // Gentle bounce
             }
         }
 
@@ -292,8 +312,8 @@
                     score++;
                     scoreElement.textContent = score;
                     
-                    // Increase game speed slightly
-                    gameSpeed += 0.02;
+                    // Increase game speed more gradually - MADE EASIER
+                    gameSpeed += 0.01; // Reduced from 0.02 to 0.01
                     
                     // Create particles for score
                     createScoreParticles();
@@ -305,9 +325,9 @@
                 }
             }
             
-            // Create new obstacles
+            // Create new obstacles - MADE EASIER (more time between obstacles)
             obstacleTimer++;
-            if (obstacleTimer > 150) {
+            if (obstacleTimer > 200) { // Increased from 150 to 200
                 createObstacle();
                 obstacleTimer = 0;
             }
@@ -317,10 +337,17 @@
             if (gameState !== 'playing') return;
             
             for (let obstacle of obstacles) {
-                // Simple rectangle collision detection
-                if (bus.x < obstacle.x + obstacleWidth &&
-                    bus.x + bus.width > obstacle.x &&
-                    (bus.y < obstacle.topHeight || bus.y + bus.height > obstacle.bottomY)) {
+                // MADE EASIER - smaller collision box for more forgiving gameplay
+                const busCollisionBox = {
+                    x: bus.x + 5,
+                    y: bus.y + 5,
+                    width: bus.width - 10,
+                    height: bus.height - 10
+                };
+                
+                if (busCollisionBox.x < obstacle.x + obstacleWidth &&
+                    busCollisionBox.x + busCollisionBox.width > obstacle.x &&
+                    (busCollisionBox.y < obstacle.topHeight || busCollisionBox.y + busCollisionBox.height > obstacle.bottomY)) {
                     gameOver();
                     break;
                 }
@@ -328,13 +355,13 @@
         }
 
         function createScoreParticles() {
-            for (let i = 0; i < 5; i++) {
+            for (let i = 0; i < 8; i++) { // More particles for better feedback
                 particles.push({
                     x: bus.x + bus.width/2,
                     y: bus.y + bus.height/2,
-                    vx: (Math.random() - 0.5) * 4,
-                    vy: (Math.random() - 0.5) * 4,
-                    life: 30,
+                    vx: (Math.random() - 0.5) * 6,
+                    vy: (Math.random() - 0.5) * 6,
+                    life: 40, // Longer lasting particles
                     color: '#FFD700'
                 });
             }
@@ -356,8 +383,8 @@
         function drawParticles() {
             particles.forEach(p => {
                 ctx.fillStyle = p.color;
-                ctx.globalAlpha = p.life / 30;
-                ctx.fillRect(p.x - 2, p.y - 2, 4, 4);
+                ctx.globalAlpha = p.life / 40;
+                ctx.fillRect(p.x - 3, p.y - 3, 6, 6);
                 ctx.globalAlpha = 1;
             });
         }
@@ -387,7 +414,7 @@
         function resetGame() {
             gameState = 'ready';
             score = 0;
-            gameSpeed = 1.5;
+            gameSpeed = 1; // Reset to easier speed
             scoreElement.textContent = '0';
             gameOverDiv.style.display = 'none';
             instructionsDiv.style.display = 'block';
