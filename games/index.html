@@ -101,9 +101,10 @@
 
         .games-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 2rem;
             margin: 2rem 0;
+            justify-items: center;
         }
 
         .game-card {
@@ -116,6 +117,8 @@
             text-decoration: none;
             color: inherit;
             cursor: pointer;
+            width: 100%;
+            max-width: 350px;
         }
 
         .game-card.available {
@@ -138,11 +141,6 @@
             background: rgba(255, 255, 255, 0.25);
             box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
         }
-
-        .game-card:nth-child(1) { animation-delay: 0s; }
-        .game-card:nth-child(2) { animation-delay: 1s; }
-        .game-card:nth-child(3) { animation-delay: 2s; }
-        .game-card:nth-child(4) { animation-delay: 3s; }
 
         .game-icon {
             font-size: 3rem;
@@ -260,33 +258,12 @@
         </p>
         
         <div class="games-grid">
-            <a href="spaceadventure.html" class="game-card available">
-                <div class="game-icon">🚀</div>
-                <div class="game-name">Space Adventure</div>
-                <div class="game-description">Embark on an epic journey through the cosmos, dodge asteroids, and explore the infinite universe!</div>
+            <a href="jumpingbus.html" class="game-card available">
+                <div class="game-icon">🚌</div>
+                <div class="game-name">Jumping Bus</div>
+                <div class="game-description">Guide your bus through challenging obstacles! Jump, dodge, and navigate through an exciting adventure filled with thrills and surprises.</div>
                 <span class="game-status status-available">Play Now</span>
             </a>
-            
-            <div class="game-card coming-soon">
-                <div class="game-icon">🎮</div>
-                <div class="game-name">Arcade Collection</div>
-                <div class="game-description">Classic arcade games reimagined with modern twists and stunning visuals.</div>
-                <span class="game-status status-coming-soon">Coming Soon</span>
-            </div>
-            
-            <div class="game-card coming-soon">
-                <div class="game-icon">🧩</div>
-                <div class="game-name">Puzzle Zone</div>
-                <div class="game-description">Mind-bending puzzles and brain teasers to challenge your problem-solving skills.</div>
-                <span class="game-status status-coming-soon">Coming Soon</span>
-            </div>
-            
-            <div class="game-card coming-soon">
-                <div class="game-icon">🏆</div>
-                <div class="game-name">Challenge Arena</div>
-                <div class="game-description">Compete in daily challenges and climb the leaderboards to prove your skills.</div>
-                <span class="game-status status-coming-soon">Coming Soon</span>
-            </div>
         </div>
         
         <p class="footer">

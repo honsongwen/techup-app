@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jumping Green Bus</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to bottom, #87CEEB 0%, #98FB98 100%);
+            overflow: hidden;
+            touch-action: none;
+            user-select: none;
+        }
+
+        #gameCanvas {
+            display: block;
+            margin: 0 auto;
+            background: linear-gradient(to bottom, #87CEEB 0%, #87CEEB 60%, #90EE90 60%, #90EE90 100%);
+            border: 3px solid #2F4F2F;
+            cursor: pointer;
+        }
+
+        #gameUI {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        #score {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 36px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+
+        #gameOver {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            color: white;
+            display: none;
+            pointer-events: all;
+        }
+
+        #gameOver h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+        }
+
+        #gameOver p {
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+        }
+
+        #restartBtn {
+            padding: 15px 30px;
+            font-size: 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            transition: all 0.2s;
+        }
+
+        #restartBtn:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+
+        #instructions {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            text-align: center;
+            font-size: 18px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="400" height="600"></canvas>
+    
+    <div id="gameUI">
+        <div id="score">0</div>
+        <div id="gameOver">
+            <h1>Game Over!</h1>
+            <p>Final Score: <span id="finalScore">0</span></p>
+            <button id="restartBtn">Play Again</button>
+        </div>
+        <div id="instructions">
+            Tap to make the bus jump!
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreElement = document.getElementById('score');
+        const gameOverDiv = document.getElementById('gameOver');
+        const finalScoreElement = document.getElementById('finalScore');
+        const restartBtn = document.getElementById('restartBtn');
+        const instructionsDiv = document.getElementById('instructions');
+
+        // Responsive canvas sizing
+        function resizeCanvas() {
+            const maxWidth = window.innerWidth - 20;
+            const maxHeight = window.innerHeight - 20;
+            const aspectRatio = 400 / 600;
+            
+            let canvasWidth = Math.min(maxWidth, 400);
+            let canvasHeight = canvasWidth / aspectRatio;
+            
+            if (canvasHeight > maxHeight) {
+                canvasHeight = maxHeight;
+                canvasWidth = canvasHeight * aspectRatio;
+            }
+            
+            canvas.style.width = canvasWidth + 'px';
+            canvas.style.height = canvasHeight + 'px';
+        }
+
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        // Game variables
+        let gameState = 'ready'; // ready, playing, gameOver
+        let score = 0;
+        let gameSpeed = 1.5;
+
+        // Bus object
+        const bus = {
+            x: 80,
+            y: 300,
+            width: 60,
+            height: 40,
+            velocity: 0,
+            gravity: 0.25,
+            jumpStrength: -7,
+            rotation: 0
+        };
+
+        // Obstacles array
+        let obstacles = [];
+        const obstacleWidth = 60;
+        const obstacleGap = 180;
+        let obstacleTimer = 0;
+
+        // Particles for effects
+        let particles = [];
+
+        function drawBus() {
+            ctx.save();
+            ctx.translate(bus.x + bus.width/2, bus.y + bus.height/2);
+            ctx.rotate(bus.rotation);
+            
+            // Double decker bus body - lower deck
+            ctx.fillStyle = '#228B22';
+            ctx.fillRect(-bus.width/2, -10, bus.width, 25);
+            
+            // Double decker bus body - upper deck
+            ctx.fillStyle = '#32CD32';
+            ctx.fillRect(-bus.width/2, -bus.height/2, bus.width, 20);
+            
+            // Lower deck windows
+            ctx.fillStyle = '#87CEEB';
+            ctx.fillRect(-bus.width/2 + 5, -5, 12, 8);
+            ctx.fillRect(-bus.width/2 + 20, -5, 12, 8);
+            ctx.fillRect(-bus.width/2 + 35, -5, 12, 8);
+            
+            // Upper deck windows
+            ctx.fillStyle = '#87CEEB';
+            ctx.fillRect(-bus.width/2 + 5, -bus.height/2 + 3, 12, 8);
+            ctx.fillRect(-bus.width/2 + 20, -bus.height/2 + 3, 12, 8);
+            ctx.fillRect(-bus.width/2 + 35, -bus.width/2 + 3, 12, 8);
+            
+            // Front windshield (lower)
+            ctx.fillStyle = '#87CEEB';
+            ctx.fillRect(bus.width/2 - 8, -8, 6, 10);
+            
+            // Front windshield (upper) 
+            ctx.fillStyle = '#87CEEB';
+            ctx.fillRect(bus.width/2 - 8, -bus.height/2 + 2, 6, 10);
+            
+            // Bus wheels
+            ctx.fillStyle = '#333';
+            ctx.beginPath();
+            ctx.arc(-bus.width/2 + 12, 12, 8, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(bus.width/2 - 12, 12, 8, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Double decker stripe
+            ctx.fillStyle = '#FFD700';
+            ctx.fillRect(-bus.width/2, -12, bus.width, 2);
+            
+            // Bus door
+            ctx.fillStyle = '#8B4513';
+            ctx.fillRect(-bus.width/2 + 50, -8, 8, 15);
+            
+            ctx.restore();
+        }
+
+        function drawObstacle(obstacle) {
+            // Top building
+            ctx.fillStyle = '#8B4513';
+            ctx.fillRect(obstacle.x, 0, obstacleWidth, obstacle.topHeight);
+            
+            // Building windows
+            ctx.fillStyle = '#FFD700';
+            for (let i = 10; i < obstacle.topHeight - 10; i += 25) {
+                for (let j = 10; j < obstacleWidth - 10; j += 15) {
+                    ctx.fillRect(obstacle.x + j, i, 8, 8);
+                }
+            }
+            
+            // Bottom building
+            ctx.fillStyle = '#8B4513';
+            ctx.fillRect(obstacle.x, obstacle.bottomY, obstacleWidth, canvas.height - obstacle.bottomY);
+            
+            // Bottom building windows
+            ctx.fillStyle = '#FFD700';
+            for (let i = obstacle.bottomY + 10; i < canvas.height - 10; i += 25) {
+                for (let j = 10; j < obstacleWidth - 10; j += 15) {
+                    ctx.fillRect(obstacle.x + j, i, 8, 8);
+                }
+            }
+        }
+
+        function createObstacle() {
+            const minGap = 220;
+            const maxGap = 280;
+            const gap = Math.random() * (maxGap - minGap) + minGap;
+            const topHeight = Math.random() * (canvas.height - gap - 200) + 80;
+            
+            obstacles.push({
+                x: canvas.width,
+                topHeight: topHeight,
+                bottomY: topHeight + gap,
+                passed: false
+            });
+        }
+
+        function updateBus() {
+            if (gameState !== 'playing') return;
+            
+            bus.velocity += bus.gravity;
+            bus.y += bus.velocity;
+            
+            // Rotation based on velocity
+            bus.rotation = Math.min(Math.max(bus.velocity * 0.05, -0.5), 0.5);
+            
+            // Check bounds
+            if (bus.y < 0 || bus.y + bus.height > canvas.height) {
+                gameOver();
+            }
+        }
+
+        function updateObstacles() {
+            if (gameState !== 'playing') return;
+            
+            // Move obstacles
+            for (let i = obstacles.length - 1; i >= 0; i--) {
+                obstacles[i].x -= gameSpeed;
+                
+                // Check for scoring
+                if (!obstacles[i].passed && obstacles[i].x + obstacleWidth < bus.x) {
+                    obstacles[i].passed = true;
+                    score++;
+                    scoreElement.textContent = score;
+                    
+                    // Increase game speed slightly
+                    gameSpeed += 0.02;
+                    
+                    // Create particles for score
+                    createScoreParticles();
+                }
+                
+                // Remove off-screen obstacles
+                if (obstacles[i].x + obstacleWidth < 0) {
+                    obstacles.splice(i, 1);
+                }
+            }
+            
+            // Create new obstacles
+            obstacleTimer++;
+            if (obstacleTimer > 150) {
+                createObstacle();
+                obstacleTimer = 0;
+            }
+        }
+
+        function checkCollisions() {
+            if (gameState !== 'playing') return;
+            
+            for (let obstacle of obstacles) {
+                // Simple rectangle collision detection
+                if (bus.x < obstacle.x + obstacleWidth &&
+                    bus.x + bus.width > obstacle.x &&
+                    (bus.y < obstacle.topHeight || bus.y + bus.height > obstacle.bottomY)) {
+                    gameOver();
+                    break;
+                }
+            }
+        }
+
+        function createScoreParticles() {
+            for (let i = 0; i < 5; i++) {
+                particles.push({
+                    x: bus.x + bus.width/2,
+                    y: bus.y + bus.height/2,
+                    vx: (Math.random() - 0.5) * 4,
+                    vy: (Math.random() - 0.5) * 4,
+                    life: 30,
+                    color: '#FFD700'
+                });
+            }
+        }
+
+        function updateParticles() {
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.life--;
+                
+                if (p.life <= 0) {
+                    particles.splice(i, 1);
+                }
+            }
+        }
+
+        function drawParticles() {
+            particles.forEach(p => {
+                ctx.fillStyle = p.color;
+                ctx.globalAlpha = p.life / 30;
+                ctx.fillRect(p.x - 2, p.y - 2, 4, 4);
+                ctx.globalAlpha = 1;
+            });
+        }
+
+        function jump() {
+            if (gameState === 'ready') {
+                startGame();
+            }
+            
+            if (gameState === 'playing') {
+                bus.velocity = bus.jumpStrength;
+            }
+        }
+
+        function startGame() {
+            gameState = 'playing';
+            instructionsDiv.style.display = 'none';
+            bus.velocity = bus.jumpStrength;
+        }
+
+        function gameOver() {
+            gameState = 'gameOver';
+            finalScoreElement.textContent = score;
+            gameOverDiv.style.display = 'block';
+        }
+
+        function resetGame() {
+            gameState = 'ready';
+            score = 0;
+            gameSpeed = 1.5;
+            scoreElement.textContent = '0';
+            gameOverDiv.style.display = 'none';
+            instructionsDiv.style.display = 'block';
+            
+            bus.y = 300;
+            bus.velocity = 0;
+            bus.rotation = 0;
+            
+            obstacles = [];
+            particles = [];
+            obstacleTimer = 0;
+        }
+
+        function gameLoop() {
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw background clouds
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            ctx.beginPath();
+            ctx.arc(100, 100, 30, 0, Math.PI * 2);
+            ctx.arc(120, 90, 35, 0, Math.PI * 2);
+            ctx.arc(140, 100, 30, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.beginPath();
+            ctx.arc(300, 150, 25, 0, Math.PI * 2);
+            ctx.arc(315, 140, 30, 0, Math.PI * 2);
+            ctx.arc(330, 150, 25, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Update game objects
+            updateBus();
+            updateObstacles();
+            updateParticles();
+            checkCollisions();
+            
+            // Draw everything
+            obstacles.forEach(drawObstacle);
+            drawBus();
+            drawParticles();
+            
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Event listeners
+        canvas.addEventListener('click', jump);
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            jump();
+        });
+
+        restartBtn.addEventListener('click', resetGame);
+
+        // Start the game
+        resetGame();
+        gameLoop();
+    </script>
+</body>
+</html>
