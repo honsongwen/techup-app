@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catch the Falling Objects</title>
+    <title>Chicken Egg Collection</title>
     <style>
         * {
             margin: 0;
@@ -13,7 +13,7 @@
 
         body {
             font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #87CEEB 0%, #98FB98 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -58,58 +58,86 @@
             background: rgba(255, 255, 255, 0.05);
         }
 
-        .basket {
-            width: 80px;
-            height: 40px;
-            background: linear-gradient(45deg, #8B4513, #D2691E);
-            border-radius: 0 0 40px 40px;
+        .chicken-container {
             position: absolute;
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
             transition: left 0.1s ease;
-            border: 3px solid #654321;
             cursor: pointer;
             z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            pointer-events: none;
         }
 
-        .basket::before {
+        .chicken {
+            font-size: 40px;
+            margin-bottom: -5px;
+            z-index: 12;
+        }
+
+        .tray {
+            width: 80px;
+            height: 12px;
+            background: linear-gradient(45deg, #8B4513, #CD853F);
+            border: 2px solid #654321;
+            border-radius: 6px;
+            position: relative;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            z-index: 11;
+        }
+
+        .tray::before {
             content: '';
             position: absolute;
-            top: -5px;
-            left: -5px;
-            right: -5px;
-            height: 10px;
-            background: linear-gradient(45deg, #8B4513, #D2691E);
-            border-radius: 20px;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #DEB887, #F4A460);
+            border-radius: 8px;
+            z-index: -1;
         }
 
-        .basket.catch-effect {
+        .tray::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 8px;
+            right: 8px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 1px;
+        }
+
+        .chicken-container.catch-effect {
             animation: catchBounce 0.3s ease-out;
         }
 
         @keyframes catchBounce {
             0% { transform: translateX(-50%) scale(1); }
-            50% { transform: translateX(-50%) scale(1.2); }
+            50% { transform: translateX(-50%) scale(1.1); }
             100% { transform: translateX(-50%) scale(1); }
         }
 
-        .basket.damage-effect {
+        .chicken-container.damage-effect {
             animation: damageShake 0.3s ease-out;
         }
 
         @keyframes damageShake {
             0%, 100% { transform: translateX(-50%) scale(1); }
-            25% { transform: translateX(-60%) scale(0.9); }
-            75% { transform: translateX(-40%) scale(0.9); }
+            25% { transform: translateX(-60%) scale(0.95); }
+            75% { transform: translateX(-40%) scale(0.95); }
         }
 
         .falling-object {
             position: absolute;
-            width: 30px;
-            height: 30px;
+            width: 35px;
+            height: 35px;
             border-radius: 50%;
-            font-size: 24px;
+            font-size: 28px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -118,15 +146,15 @@
         }
 
         .good-object {
-            background: linear-gradient(45deg, #4CAF50, #8BC34A);
-            border: 2px solid #2E7D32;
-            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+            background: linear-gradient(45deg, #FFF8DC, #F0E68C);
+            border: 2px solid #DAA520;
+            box-shadow: 0 4px 15px rgba(240, 230, 140, 0.4);
         }
 
         .bad-object {
-            background: linear-gradient(45deg, #f44336, #FF5722);
-            border: 2px solid #C62828;
-            box-shadow: 0 4px 15px rgba(244, 67, 54, 0.4);
+            background: linear-gradient(45deg, #696969, #2F4F4F);
+            border: 2px solid #1C1C1C;
+            box-shadow: 0 4px 15px rgba(105, 105, 105, 0.4);
         }
 
         .collected {
@@ -173,7 +201,7 @@
         }
 
         .restart-btn {
-            background: linear-gradient(45deg, #667eea, #764ba2);
+            background: linear-gradient(45deg, #87CEEB, #98FB98);
             color: white;
             border: none;
             padding: 12px 25px;
@@ -256,11 +284,14 @@
         </div>
         
         <div class="game-area" id="gameArea">
-            <div class="basket" id="basket"></div>
+            <div class="chicken-container" id="chickenContainer">
+                <div class="chicken">🐔</div>
+                <div class="tray"></div>
+            </div>
         </div>
         
         <div class="instructions">
-            Touch and drag to move basket • Catch 🍎 avoid 💣
+            Touch and drag to move chicken • Collect 🥚 avoid 🗑️
         </div>
         
         <div class="game-over" id="gameOver">
@@ -271,27 +302,27 @@
     </div>
 
     <script>
-        class CatchingGame {
+        class ChickenEggGame {
             constructor() {
                 this.score = 0;
                 this.lives = 3;
                 this.gameRunning = false;
                 this.gamePaused = false;
                 this.fallingObjects = [];
-                this.basketPosition = 50; // percentage
+                this.chickenPosition = 50; // percentage
                 this.gameSpeed = 1;
                 this.spawnRate = 0.02;
                 
                 this.gameArea = document.getElementById('gameArea');
-                this.basket = document.getElementById('basket');
+                this.chickenContainer = document.getElementById('chickenContainer');
                 this.scoreElement = document.getElementById('score');
                 this.livesElement = document.getElementById('lives');
                 this.gameOverElement = document.getElementById('gameOver');
                 this.finalScoreElement = document.getElementById('finalScore');
                 this.pauseBtn = document.getElementById('pauseBtn');
                 
-                this.goodObjects = ['🍎', '🍊', '🍌', '🍇', '🍓', '🥕', '🌽'];
-                this.badObjects = ['💣', '🔥', '⚡', '💀', '🗲'];
+                this.goodObjects = ['🥚']; // Only eggs
+                this.badObjects = ['🗑️']; // Only trash
                 
                 this.init();
             }
@@ -305,7 +336,7 @@
                 // Mouse events
                 this.gameArea.addEventListener('mousemove', (e) => {
                     if (this.gameRunning && !this.gamePaused) {
-                        this.moveBasket(e);
+                        this.moveChicken(e);
                     }
                 });
                 
@@ -313,7 +344,7 @@
                 this.gameArea.addEventListener('touchmove', (e) => {
                     e.preventDefault();
                     if (this.gameRunning && !this.gamePaused) {
-                        this.moveBasket(e.touches[0]);
+                        this.moveChicken(e.touches[0]);
                     }
                 });
                 
@@ -327,13 +358,13 @@
                 });
             }
             
-            moveBasket(event) {
+            moveChicken(event) {
                 const rect = this.gameArea.getBoundingClientRect();
                 const x = event.clientX - rect.left;
                 const percentage = (x / rect.width) * 100;
                 
-                this.basketPosition = Math.max(10, Math.min(90, percentage));
-                this.basket.style.left = this.basketPosition + '%';
+                this.chickenPosition = Math.max(10, Math.min(90, percentage));
+                this.chickenContainer.style.left = this.chickenPosition + '%';
             }
             
             startGame() {
@@ -357,7 +388,7 @@
             
             spawnObjects() {
                 if (Math.random() < this.spawnRate) {
-                    const isGood = Math.random() < 0.7; // 70% chance for good objects
+                    const isGood = Math.random() < 0.75; // 75% chance for eggs
                     const object = {
                         id: Date.now() + Math.random(),
                         x: Math.random() * 80 + 10, // 10-90% to avoid edges
@@ -400,23 +431,21 @@
             }
             
             checkCollisions() {
-                // Get basket boundaries in pixels
-                const gameAreaRect = this.gameArea.getBoundingClientRect();
-                const basketRect = this.basket.getBoundingClientRect();
-                const basketLeftPercent = this.basketPosition - 10; // basket width consideration
-                const basketRightPercent = this.basketPosition + 10;
-                const basketTopY = 440; // basket starts around here in game area
+                // Get tray boundaries (tray is 80px wide, so 10% on each side of center)
+                const trayLeftPercent = this.chickenPosition - 10; 
+                const trayRightPercent = this.chickenPosition + 10;
+                const trayTopY = 440; // tray starts around here in game area
                 
                 this.fallingObjects.forEach((object, index) => {
                     const objectLeftPercent = object.x - 4;
                     const objectRightPercent = object.x + 4;
-                    const objectBottomY = object.y + 30;
+                    const objectBottomY = object.y + 35;
                     
-                    // Check if object overlaps with basket area
-                    if (objectBottomY >= basketTopY && 
+                    // Check if object overlaps with tray area
+                    if (objectBottomY >= trayTopY && 
                         object.y <= 480 && // don't catch if too far down
-                        objectRightPercent >= basketLeftPercent &&
-                        objectLeftPercent <= basketRightPercent) {
+                        objectRightPercent >= trayLeftPercent &&
+                        objectLeftPercent <= trayRightPercent) {
                         
                         this.handleCollision(object, index);
                     }
@@ -430,20 +459,20 @@
                 if (object.isGood) {
                     this.score += 10;
                     this.scoreElement.textContent = this.score;
-                    this.showFloatingText('+10', '#4CAF50');
-                    this.basket.classList.add('catch-effect');
+                    this.showFloatingText('+10', '#DAA520');
+                    this.chickenContainer.classList.add('catch-effect');
                     
                     setTimeout(() => {
-                        this.basket.classList.remove('catch-effect');
+                        this.chickenContainer.classList.remove('catch-effect');
                     }, 300);
                 } else {
                     this.lives--;
                     this.livesElement.textContent = this.lives;
                     this.showFloatingText('-1 Life', '#f44336');
-                    this.basket.classList.add('damage-effect');
+                    this.chickenContainer.classList.add('damage-effect');
                     
                     setTimeout(() => {
-                        this.basket.classList.remove('damage-effect');
+                        this.chickenContainer.classList.remove('damage-effect');
                     }, 300);
                     
                     if (this.lives <= 0) {
@@ -465,7 +494,7 @@
                 const floatingText = document.createElement('div');
                 floatingText.textContent = text;
                 floatingText.className = 'floating-text';
-                floatingText.style.left = this.basketPosition + '%';
+                floatingText.style.left = this.chickenPosition + '%';
                 floatingText.style.bottom = '80px';
                 floatingText.style.color = color;
                 
@@ -510,10 +539,10 @@
             document.getElementById('lives').textContent = '3';
             document.getElementById('pauseBtn').textContent = '⏸';
             
-            // Reset basket position and remove any effects
-            const basket = document.getElementById('basket');
-            basket.style.left = '50%';
-            basket.className = 'basket';
+            // Reset chicken position and remove any effects
+            const chickenContainer = document.getElementById('chickenContainer');
+            chickenContainer.style.left = '50%';
+            chickenContainer.className = 'chicken-container';
             
             // Clear any remaining objects
             const existingObjects = document.querySelectorAll('.falling-object');
@@ -524,12 +553,12 @@
             existingText.forEach(text => text.remove());
             
             // Start new game
-            new CatchingGame();
+            new ChickenEggGame();
         }
         
         // Start the game when page loads
         window.addEventListener('load', () => {
-            new CatchingGame();
+            new ChickenEggGame();
         });
     </script>
 </body>
